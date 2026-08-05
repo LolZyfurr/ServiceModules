@@ -1,0 +1,279 @@
+body {
+    background-color: #000;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.messageObject__0,
+.messageContent__0,
+.contentLeft__0,
+.contentRight__0,
+.messageAvatar__0,
+.contentHeader__0,
+.contentTimestamp__0,
+.contentUsername__0,
+.contentContainer__0,
+a,
+.mentionWrapper__0,
+.messageEmoji__0,
+.messageTag__0,
+.tagText__0 {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.messageEdited__0 {
+    color: oklab(0.392251 0.0000178963 0.00000786781);
+    cursor: default;
+    display: inline-block;
+    dynamic-range-limit: no-limit;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    height: 20px;
+    line-height: 22px;
+    overflow-wrap: break-word;
+    pointer-events: auto;
+    text-indent: 0px;
+    text-rendering: optimizelegibility;
+    text-wrap-mode: wrap;
+    vertical-align: baseline;
+    /* removed user-select:text */
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.messageContent__0 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.contentLeft__0 {
+    display: flex;
+    flex-shrink: 0;
+    width: 72px;
+    height: 100%;
+    justify-content: center;
+}
+
+.contentRight__0 {
+    padding-right: 72px;
+}
+
+.typeSelf__0 .contentRight__0 {
+    padding-right: 0px;
+    padding-left: 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.messageAvatar__0 {
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 1000px;
+    cursor: pointer;
+}
+
+.contentHeader__0 {
+    gap: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.contentTimestamp__0 {
+    color: oklab(0.392251 0.0000178963 0.00000786781);
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 22px;
+}
+
+.contentUsername__0 {
+    color: oklab(0.755579 0.0000344217 0.0000151396);
+    flex-shrink: 0;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    position: relative;
+    cursor: pointer;
+}
+
+.contentContainer__0 {
+    color: oklab(0.731571 0.0000334382 0.0000146031);
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
+    background: #000;
+    outline: rgba(151, 151, 159, 0.24) solid 1px;
+    padding: 12px;
+    border-radius: 4px 16px 16px 16px;
+    margin-bottom: 4px;
+    width: fit-content;
+}
+
+.typeSelf__0 .contentContainer__0 {
+    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+    color: #ffffff;
+    outline: none;
+    border-radius: 16px 4px 16px 16px;
+}
+
+.typeSelf__0 a {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.typeSelf__0 .mentionWrapper__0 {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.typeSelf__0 .messageEdited__0 {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+a {
+    color: oklab(0.628898 -0.0433293 -0.160237);
+    cursor: pointer;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.mentionWrapper__0 {
+    background-color: oklab(0.57742 0.0140622 -0.208604 / 0.239216);
+    border-radius: 3px;
+    color: oklab(0.751275 0.00699186 -0.127347);
+    cursor: pointer;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    padding: 2px 0px;
+    transition: background-color 0.05s ease-out, color 0.05s ease-out;
+}
+
+.mentionWrapper__0:hover {
+    background-color: rgb(88, 101, 242);
+    color: rgb(255, 255, 255);
+}
+
+.messageEmoji__0 {
+    color: oklab(0.731571 0.0000334382 0.0000146031);
+    cursor: pointer;
+    display: inline;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    height: 22px;
+    line-height: 22px;
+    object-fit: contain;
+    vertical-align: bottom;
+    width: 22px;
+}
+
+.messageTag__0 {
+    background-color: rgba(151, 151, 159, 0.24);
+    border-radius: 4px;
+    position: relative;
+    transition: background 0.1s ease-in-out;
+    align-items: center;
+    color: oklab(0.731571 0.0000334382 0.0000146031);
+    cursor: pointer;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 2px;
+    max-width: 70px;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    display: flex;
+    padding: 1px 2px;
+    gap: 2px;
+}
+
+.tagText__0 {
+    color: oklab(0.731571 0.0000334382 0.0000146031);
+    cursor: pointer;
+    font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 2px;
+}
+
+.typeSelf__0 .messageContent__0 {
+    flex-direction: row-reverse;
+}
+
+.typeSelf__0 .contentHeader__0 {
+    flex-direction: row-reverse;
+}
+
+.typeFollow__0 .contentHeader__0 {
+    display: none;
+}
+
+.typeFollow__0 .messageAvatar__0 {
+    display: none;
+}
+
+.typeFollow__0 .contentContainer__0 {
+    border-radius: 16px;
+}
+
+/* Typing Indicator Styles */
+.typingContainer__0 {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 16px;
+    padding: 0 4px;
+}
+
+.typingDot__0 {
+    width: 6px;
+    height: 6px;
+    background-color: oklab(0.731571 0.0000334382 0.0000146031);
+    border-radius: 50%;
+    animation: typingPulse__0 1.4s infinite ease-in-out both;
+}
+
+.typeSelf__0 .typingDot__0 {
+    background-color: #ffffff;
+}
+
+.typingDot__0:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.typingDot__0:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes typingPulse__0 {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0.6);
+        opacity: 0.4;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
