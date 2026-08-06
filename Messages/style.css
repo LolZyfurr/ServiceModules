@@ -118,7 +118,6 @@ a,
     outline: rgba(151, 151, 159, 0.24) solid 1px;
     padding: 12px;
     border-radius: 4px 16px 16px 16px;
-    margin-bottom: 4px;
     width: fit-content;
 }
 
@@ -261,6 +260,15 @@ a {
 
 .typingDot__0:nth-child(2) {
     animation-delay: -0.16s;
+}
+
+.messageObject__0.typeFollow__0 {
+    margin-bottom: 4px;
+}
+
+.messageObject__0 {
+    margin-top: 8px;
+    margin-bottom: 4px;
 }
 
 @keyframes typingPulse__0 {
