@@ -272,6 +272,14 @@ a {
     margin-bottom: 4px;
 }
 
+.typeSelf__0 .contentUsername__0 {
+    display: none;
+}
+
+.typeSelf__0 .messageTag__0 {
+    display: none;
+}
+
 @keyframes typingPulse__0 {
 
     0%,
