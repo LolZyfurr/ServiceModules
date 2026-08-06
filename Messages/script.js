@@ -32,8 +32,15 @@ export function formatText(rawText) {
     // 2. Mentions
     text = text.replace(/<@(\d+)>/g, '<span class="mentionWrapper__0" role="button">@Kaedes</span>');
 
-    // 3. Emojis (Mapping literals and shortcodes to Twemoji HTML)
-    text = text.replace(/(😂|:joy:)/g, '<img class="messageEmoji__0" data-type="emoji" data-name=":joy:" alt="😂" draggable="false" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f602.svg">');
+    // 3. Emojis (Custom Discord Emojis & Twemoji HTML parsing)
+    text = text.replace(/<:([a-zA-Z0-9_]+):(\d+)>/g, '<img class="messageEmoji__0" data-type="emoji" data-name=":$1:" alt=":$1:" draggable="false" src="https://cdn.discordapp.com/emojis/$2.png">');
+    text = text.replace(/\p{Extended_Pictographic}/gu, (emoji) => {
+        const codePoints = Array.from(emoji)
+            .map(char => char.codePointAt(0).toString(16))
+            .filter(cp => cp !== 'fe0f')
+            .join('-');
+        return `<img class="messageEmoji__0" data-type="emoji" data-name="${emoji}" alt="${emoji}" draggable="false" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${codePoints}.svg">`;
+    });
 
     // 4. Markdown Links
     text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" rel="noreferrer noopener" target="_blank" role="link"><span>$1</span></a>');
