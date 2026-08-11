@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artist Studio</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=4">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=6">
 </head>
 
 <body>
@@ -59,6 +59,93 @@
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" onclick="closeLoginModal()">Cancel</button>
                     <button type="button" class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="handleLogin()">Login / Register</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Main Edit Modal -->
+        <div id="pricingMainEditModal" class="modal-overlay">
+            <div class="modal-card" id="pricingMainEditCard">
+                <h3>Edit Pricing Section</h3>
+                <p class="subtitle">Update channel description and manage options layout.</p>
+
+                <div class="form-group">
+                    <label>Section Description</label>
+                    <textarea id="editPricingDescription" rows="2" oninput="markPricingMainDirty()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Reorder & Edit Items</label>
+                    <div id="pricingReorderList">
+                        <!-- Dynamic List -->
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="tryClosePricingMainModal()">Close</button>
+                </div>
+
+                <!-- Unsaved Bar -->
+                <div id="pricingMainUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="discardPricingMainChanges()">Discard</button>
+                        <button type="button" class="submit-btn" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="savePricingMainChanges()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Pricing Item Edit Modal -->
+        <div id="pricingItemEditModal" class="modal-overlay">
+            <div class="modal-card" id="pricingItemEditCard">
+                <h3 id="itemEditModalTitle">Edit Option</h3>
+                <p class="subtitle">Modify pricing rates, features, and example images.</p>
+
+                <div class="form-group">
+                    <label>Option Title</label>
+                    <input type="text" id="editItemTitle" oninput="markPricingItemDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Price Display</label>
+                    <input type="text" id="editItemPrice" placeholder="e.g. $15" oninput="markPricingItemDirty()">
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="margin:0;">Features (Max 200 chars each)</label>
+                        <button type="button" class="icon-btn" onclick="addFeatureInput()" title="Add Feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="editItemFeaturesContainer">
+                        <!-- Dynamic Inputs -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Examples</label>
+                    <input type="file" id="editItemImageUpload" accept="image/*" multiple onchange="handleImageUpload(event)">
+                    <div class="image-preview-grid" id="editItemImagePreviews">
+                        <!-- Image Previews -->
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="tryClosePricingItemModal()">Back</button>
+                </div>
+
+                <!-- Unsaved Bar -->
+                <div id="pricingItemUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="discardPricingItemChanges()">Discard</button>
+                        <button type="button" class="submit-btn" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="savePricingItemChanges()">Save Changes</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -182,7 +269,7 @@
 
                 <div class="channelButton__0" id="btn-order" role="button" onclick="showTab('order', 'Order Form')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                         <polyline points="14 2 14 8 20 8" />
                         <line x1="16" y1="13" x2="8" y2="13" />
                         <line x1="16" y1="17" x2="8" y2="17" />
@@ -212,59 +299,20 @@
 
                     <!-- 1. PRICING PANEL -->
                     <div id="pricing" class="view-panel active">
-                        <div class="panel-header">
-                            <h2>Commission Pricing</h2>
-                            <p>Base rates for standard art commissions. Click a card to start an order.</p>
+                        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h2>Commission Pricing</h2>
+                                <p id="pricingHeaderDesc">Base rates for standard art commissions. Click a card to start an order.</p>
+                            </div>
+                            <button id="editPricingSectionBtn" class="header-edit-btn" style="display: none;" onclick="openPricingMainModal()" title="Edit Pricing Section">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20h9" />
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                </svg>
+                            </button>
                         </div>
-                        <div class="pricing-grid">
-                            <div class="card pricing-card" onclick="selectPricingOption('Headshot / Icon')">
-                                <div class="pricing-carousel" id="carousel-headshot">
-                                    <button type="button" class="carousel-btn prev" onclick="event.stopPropagation(); cycleCarousel('carousel-headshot', -1)">&lt;</button>
-                                    <img src="https://picsum.photos/400/300?random=11" class="active" alt="Headshot Example 1">
-                                    <img src="https://picsum.photos/400/300?random=12" alt="Headshot Example 2">
-                                    <img src="https://picsum.photos/400/300?random=13" alt="Headshot Example 3">
-                                    <button type="button" class="carousel-btn next" onclick="event.stopPropagation(); cycleCarousel('carousel-headshot', 1)">&gt;</button>
-                                </div>
-                                <h4>Headshot / Icon</h4>
-                                <div class="price">$35</div>
-                                <ul>
-                                    <li>✓ Fully shaded & colored</li>
-                                    <li>✓ High-res digital PNG</li>
-                                    <li>✓ Simple background included</li>
-                                </ul>
-                            </div>
-                            <div class="card pricing-card" onclick="selectPricingOption('Half Body')">
-                                <div class="pricing-carousel" id="carousel-halfbody">
-                                    <button type="button" class="carousel-btn prev" onclick="event.stopPropagation(); cycleCarousel('carousel-halfbody', -1)">&lt;</button>
-                                    <img src="https://picsum.photos/400/300?random=21" class="active" alt="Half Body Example 1">
-                                    <img src="https://picsum.photos/400/300?random=22" alt="Half Body Example 2">
-                                    <img src="https://picsum.photos/400/300?random=23" alt="Half Body Example 3">
-                                    <button type="button" class="carousel-btn next" onclick="event.stopPropagation(); cycleCarousel('carousel-halfbody', 1)">&gt;</button>
-                                </div>
-                                <h4>Half Body</h4>
-                                <div class="price">$65</div>
-                                <ul>
-                                    <li>✓ Detailed character art</li>
-                                    <li>✓ Expressive posing</li>
-                                    <li>✓ Transparent or simple backdrop</li>
-                                </ul>
-                            </div>
-                            <div class="card pricing-card" onclick="selectPricingOption('Full Body Illustration')">
-                                <div class="pricing-carousel" id="carousel-fullbody">
-                                    <button type="button" class="carousel-btn prev" onclick="event.stopPropagation(); cycleCarousel('carousel-fullbody', -1)">&lt;</button>
-                                    <img src="https://picsum.photos/400/300?random=31" class="active" alt="Full Body Example 1">
-                                    <img src="https://picsum.photos/400/300?random=32" alt="Full Body Example 2">
-                                    <img src="https://picsum.photos/400/300?random=33" alt="Full Body Example 3">
-                                    <button type="button" class="carousel-btn next" onclick="event.stopPropagation(); cycleCarousel('carousel-fullbody', 1)">&gt;</button>
-                                </div>
-                                <h4>Full Body Illustration</h4>
-                                <div class="price">$100</div>
-                                <ul>
-                                    <li>✓ Complete character rendition</li>
-                                    <li>✓ Full lighting & details</li>
-                                    <li>✓ Complex prop support (+$15)</li>
-                                </ul>
-                            </div>
+                        <div class="pricing-grid" id="pricing-container">
+
                         </div>
                     </div>
 
@@ -290,36 +338,10 @@
                             <h2>Live Commission Queue</h2>
                             <p>Track current project statuses in real-time.</p>
                         </div>
-                        <div class="kanban-board">
-                            <div class="kanban-column">
-                                <h4>Queued</h4>
-                                <div class="kanban-card">
-                                    <div class="client-name">Alex M.</div>
-                                    <div>Full Body Character</div>
-                                    <span class="tag">Awaiting Sketch</span>
-                                </div>
-                                <div class="kanban-card">
-                                    <div class="client-name">Sam K.</div>
-                                    <div>Profile Icon</div>
-                                    <span class="tag">Queued</span>
-                                </div>
-                            </div>
-                            <div class="kanban-column">
-                                <h4>In Progress</h4>
-                                <div class="kanban-card">
-                                    <div class="client-name">Jordan P.</div>
-                                    <div>Half Body Scene</div>
-                                    <span class="tag" style="background: rgba(234, 179, 8, 0.2); color: #fde047;">Lineart Phase</span>
-                                </div>
-                            </div>
-                            <div class="kanban-column">
-                                <h4>Completed</h4>
-                                <div class="kanban-card">
-                                    <div class="client-name">Taylor R.</div>
-                                    <div>Headshot / Icon</div>
-                                    <span class="tag" style="background: rgba(34, 197, 94, 0.2); color: #86efac;">Delivered</span>
-                                </div>
-                            </div>
+                        <div class="kanban-board" id="progress-container">
+
+
+
                         </div>
                     </div>
 
@@ -370,6 +392,157 @@
         </div>
     </div>
 
+    <script type="module">
+        import newPricingCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/pricingCard.js?t=1';
+
+        import newKanbanColumn from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/kanbanColumn.js?t=2';
+
+        const exampleResponse = {
+            user: {
+                id: 1,
+                handle: "artist_handle",
+                name: "Artist Studio",
+                profile: {
+                    avatar: "https://picsum.photos/200/200?random=1",
+                    banner: "https://picsum.photos/800/200?random=2",
+                    bio: "Digital Illustrator & Concept Artist. Commissions are currently OPEN! Check options & queue below.",
+                    pronouns: "He/Him",
+                    status: {
+                        commissions: {
+                            type: "open",
+                            slots: {
+                                taken: 3,
+                                total: 5
+                            }
+                        },
+                        trades: {
+                            type: "selective",
+                            slots: null
+                        },
+                        requests: {
+                            type: "closed",
+                            slots: null
+                        },
+                    },
+                    type: "founder"
+                },
+                channels: {
+                    Pricing: [{
+                            title: "Fullbody",
+                            price: "$15",
+                            examples: [
+                                "https://picsum.photos/400/300?random=1",
+                                "https://picsum.photos/400/300?random=2"
+                            ],
+                            features: [
+                                "Fully rendered character",
+                                "Complex background",
+                                "Source files included"
+                            ]
+                        },
+                        {
+                            title: "Halfbody",
+                            price: "$10",
+                            examples: [
+                                "https://picsum.photos/400/300?random=3",
+                                "https://picsum.photos/400/300?random=4"
+                            ],
+                            features: [
+                                "Fully rendered character",
+                                "Complex background",
+                                "Source files included"
+                            ]
+                        },
+                        {
+                            title: "Headshot",
+                            price: "$5",
+                            examples: [
+                                "https://picsum.photos/400/300?random=5",
+                                "https://picsum.photos/400/300?random=6"
+                            ],
+                            features: [
+                                "Fully rendered character",
+                                "Complex background",
+                                "Source files included"
+                            ]
+                        }
+                    ],
+                    Progress: [{
+                            title: "Queued",
+                            items: [{
+                                    order: "3674e32rtdguyhe",
+                                    description: "Full Body Character",
+                                    status: "Awaiting Sketch"
+                                },
+                                {
+                                    order: "98yf9whuief89",
+                                    description: "Profile Icon",
+                                    status: "Queued"
+                                }
+                            ]
+                        },
+                        {
+                            title: "In Progress",
+                            items: [{
+                                order: "2iueh3ih9d",
+                                description: "Half Body Scene",
+                                status: "Lineart Phase"
+                            }]
+                        },
+                        {
+                            title: "Completed",
+                            items: [{
+                                order: "23iuh2rh2f89",
+                                description: "Headshot / Icon",
+                                status: "Delivered"
+                            }]
+                        }
+                    ]
+                },
+            }
+        }
+
+        window.selectPricingOption = (title) => {
+            alert(`Selected option: ${title}`);
+        };
+
+        window.renderPricingGrid = function() {
+            const container = document.getElementById('pricing-container');
+            if (!container) return;
+            container.innerHTML = '';
+            (window.pricingData || exampleResponse.user.channels.Pricing).forEach(item => {
+                const card = newPricingCard({
+                    title: item.title,
+                    price: item.price,
+                    examples: item.examples,
+                    features: item.features
+                });
+
+                card.parent('#pricing-container');
+            });
+        };
+
+        window.renderProgressGrid = function() {
+            const container = document.getElementById('progress-container');
+            if (!container) return;
+            container.innerHTML = '';
+            (window.progressData || exampleResponse.user.channels.Progress).forEach(item => {
+                const column = newKanbanColumn({
+                    title: item.title,
+                    items: item.items
+                });
+
+                column.parent('#progress-container');
+            });
+        };
+
+        window.pricingData = exampleResponse.user.channels.Pricing;
+        window.progressData = exampleResponse.user.channels.Progress;
+
+        window.renderPricingGrid();
+        window.renderProgressGrid();
+    </script>
+
     <script>
         let isLoggedIn = false;
 
@@ -413,16 +586,8 @@
             document.getElementById('loginBannerBtn').style.display = 'none';
             document.getElementById('editBannerBtn').style.display = 'flex';
             document.getElementById('settingsBannerBtn').style.display = 'flex';
+            document.getElementById('editPricingSectionBtn').style.display = 'inline-flex';
             closeLoginModal();
-        }
-
-        function cycleCarousel(carouselId, direction) {
-            const carousel = document.getElementById(carouselId);
-            const images = carousel.querySelectorAll('img');
-            let activeIndex = Array.from(images).findIndex(img => img.classList.contains('active'));
-            images[activeIndex].classList.remove('active');
-            activeIndex = (activeIndex + direction + images.length) % images.length;
-            images[activeIndex].classList.add('active');
         }
 
         function selectPricingOption(type) {
@@ -443,14 +608,272 @@
 
         function toggleSubmitBtn() {
             const check = document.getElementById('tosCheck');
-            document.getElementById('confirmSubmitBtn').disabled = !check.checked;
+            const btn = document.getElementById('confirmSubmitBtn');
+            if (check && btn) {
+                btn.disabled = !check.checked;
+            }
         }
 
         function confirmOrder() {
             alert('Order submitted successfully!');
             closeTosModal();
         }
+
+        /* --- Pricing Edit State Management --- */
+        let activePricingMainDraft = null;
+        let isPricingMainDirty = false;
+
+        let editingItemIndex = -1;
+        let activePricingItemDraft = null;
+        let isPricingItemDirty = false;
+
+        /* --- Main Pricing Section Modal Functions --- */
+        function openPricingMainModal() {
+            activePricingMainDraft = {
+                description: document.getElementById('pricingHeaderDesc').textContent,
+                items: JSON.parse(JSON.stringify(window.pricingData))
+            };
+            isPricingMainDirty = false;
+            document.getElementById('editPricingDescription').value = activePricingMainDraft.description;
+            renderReorderList();
+            updatePricingMainUnsavedBar();
+            document.getElementById('pricingMainEditModal').classList.add('active');
+        }
+
+        function renderReorderList() {
+            const listContainer = document.getElementById('pricingReorderList');
+            listContainer.innerHTML = '';
+            activePricingMainDraft.items.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'edit-item-row';
+                row.innerHTML = `
+                    <div class="item-info">
+                        <strong>${item.title}</strong>
+                        <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">(${item.price})</span>
+                    </div>
+                    <div class="item-actions">
+                        <button type="button" class="icon-btn" onclick="movePricingItem(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+                        <button type="button" class="icon-btn" onclick="movePricingItem(${idx}, 1)" ${idx === activePricingMainDraft.items.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+                        <button type="button" class="icon-btn" onclick="openPricingItemModal(${idx})" title="Edit Item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(row);
+            });
+        }
+
+        function movePricingItem(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= activePricingMainDraft.items.length) return;
+            const temp = activePricingMainDraft.items[index];
+            activePricingMainDraft.items[index] = activePricingMainDraft.items[newIndex];
+            activePricingMainDraft.items[newIndex] = temp;
+            markPricingMainDirty();
+            renderReorderList();
+        }
+
+        function markPricingMainDirty() {
+            isPricingMainDirty = true;
+            updatePricingMainUnsavedBar();
+        }
+
+        function updatePricingMainUnsavedBar() {
+            const bar = document.getElementById('pricingMainUnsavedBar');
+            const card = document.getElementById('pricingMainEditCard');
+            if (isPricingMainDirty) {
+                bar.style.display = 'flex';
+                card.classList.add('has-unsaved-bar');
+            } else {
+                bar.style.display = 'none';
+                card.classList.remove('has-unsaved-bar');
+            }
+        }
+
+        function tryClosePricingMainModal() {
+            if (isPricingMainDirty) {
+                alert('You have unsaved changes. Please choose Save or Discard below.');
+                return;
+            }
+            document.getElementById('pricingMainEditModal').classList.remove('active');
+        }
+
+        function savePricingMainChanges() {
+            activePricingMainDraft.description = document.getElementById('editPricingDescription').value;
+            const headerDesc = document.getElementById('pricingHeaderDesc');
+            if (headerDesc) headerDesc.textContent = activePricingMainDraft.description;
+
+            const updatedItems = JSON.parse(JSON.stringify(activePricingMainDraft.items));
+            window.pricingData = updatedItems;
+            if (typeof exampleResponse !== 'undefined' && exampleResponse.user?.channels) {
+                exampleResponse.user.channels.Pricing = updatedItems;
+            }
+
+            window.renderPricingGrid();
+            isPricingMainDirty = false;
+            updatePricingMainUnsavedBar();
+            document.getElementById('pricingMainEditModal').classList.remove('active');
+        }
+
+        function discardPricingMainChanges() {
+            activePricingMainDraft = {
+                description: document.getElementById('pricingHeaderDesc').textContent,
+                items: JSON.parse(JSON.stringify(window.pricingData))
+            };
+            document.getElementById('editPricingDescription').value = activePricingMainDraft.description;
+            renderReorderList();
+            isPricingMainDirty = false;
+            updatePricingMainUnsavedBar();
+            document.getElementById('pricingMainEditModal').classList.remove('active');
+        }
+
+        /* --- Single Pricing Item Modal Functions --- */
+        function openPricingItemModal(index) {
+            editingItemIndex = index;
+            activePricingItemDraft = JSON.parse(JSON.stringify(activePricingMainDraft.items[index]));
+            isPricingItemDirty = false;
+
+            document.getElementById('itemEditModalTitle').textContent = `Edit ${activePricingItemDraft.title}`;
+            document.getElementById('editItemTitle').value = activePricingItemDraft.title;
+            document.getElementById('editItemPrice').value = activePricingItemDraft.price;
+
+            renderFeaturesInputs();
+            renderImagePreviews();
+            updatePricingItemUnsavedBar();
+
+            document.getElementById('pricingItemEditModal').classList.add('active');
+        }
+
+        function renderFeaturesInputs() {
+            const container = document.getElementById('editItemFeaturesContainer');
+            container.innerHTML = '';
+            activePricingItemDraft.features.forEach((feat, idx) => {
+                const row = document.createElement('div');
+                row.style.marginBottom = '8px';
+
+                const inputRow = document.createElement('div');
+                inputRow.className = 'feature-input-row';
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.maxLength = 200;
+                input.value = feat;
+                input.oninput = (e) => {
+                    activePricingItemDraft.features[idx] = e.target.value;
+                    row.querySelector('.char-counter').textContent = `${e.target.value.length}/200`;
+                    markPricingItemDirty();
+                };
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'icon-btn';
+                removeBtn.innerHTML = '✕';
+                removeBtn.onclick = () => {
+                    activePricingItemDraft.features.splice(idx, 1);
+                    renderFeaturesInputs();
+                    markPricingItemDirty();
+                };
+
+                inputRow.appendChild(input);
+                inputRow.appendChild(removeBtn);
+
+                const counter = document.createElement('div');
+                counter.className = 'char-counter';
+                counter.textContent = `${feat.length}/200`;
+
+                row.appendChild(inputRow);
+                row.appendChild(counter);
+                container.appendChild(row);
+            });
+        }
+
+        function addFeatureInput() {
+            if (!activePricingItemDraft.features) activePricingItemDraft.features = [];
+            activePricingItemDraft.features.push('');
+            renderFeaturesInputs();
+            markPricingItemDirty();
+        }
+
+        function renderImagePreviews() {
+            const container = document.getElementById('editItemImagePreviews');
+            container.innerHTML = '';
+            if (!activePricingItemDraft.examples) activePricingItemDraft.examples = [];
+            activePricingItemDraft.examples.forEach((url, idx) => {
+                const item = document.createElement('div');
+                item.className = 'image-preview-item';
+                item.innerHTML = `
+                    <img src="${url}" alt="Preview">
+                    <button type="button" class="remove-img" onclick="removeImageExample(${idx})">✕</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function handleImageUpload(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    activePricingItemDraft.examples.push(event.target.result);
+                    renderImagePreviews();
+                    markPricingItemDirty();
+                };
+                reader.readAsDataURL(file);
+            });
+            e.target.value = '';
+        }
+
+        function removeImageExample(idx) {
+            activePricingItemDraft.examples.splice(idx, 1);
+            renderImagePreviews();
+            markPricingItemDirty();
+        }
+
+        function markPricingItemDirty() {
+            isPricingItemDirty = true;
+            updatePricingItemUnsavedBar();
+        }
+
+        function updatePricingItemUnsavedBar() {
+            const bar = document.getElementById('pricingItemUnsavedBar');
+            const card = document.getElementById('pricingItemEditCard');
+            if (isPricingItemDirty) {
+                bar.style.display = 'flex';
+                card.classList.add('has-unsaved-bar');
+            } else {
+                bar.style.display = 'none';
+                card.classList.remove('has-unsaved-bar');
+            }
+        }
+
+        function tryClosePricingItemModal() {
+            if (isPricingItemDirty) {
+                alert('You have unsaved changes. Please choose Save or Discard below.');
+                return;
+            }
+            document.getElementById('pricingItemEditModal').classList.remove('active');
+        }
+
+        function savePricingItemChanges() {
+            activePricingItemDraft.title = document.getElementById('editItemTitle').value;
+            activePricingItemDraft.price = document.getElementById('editItemPrice').value;
+
+            activePricingMainDraft.items[editingItemIndex] = JSON.parse(JSON.stringify(activePricingItemDraft));
+            markPricingMainDirty();
+            renderReorderList();
+
+            isPricingItemDirty = false;
+            updatePricingItemUnsavedBar();
+            document.getElementById('pricingItemEditModal').classList.remove('active');
+        }
+
+        function discardPricingItemChanges() {
+            isPricingItemDirty = false;
+            updatePricingItemUnsavedBar();
+            document.getElementById('pricingItemEditModal').classList.remove('active');
+        }
     </script>
+
 </body>
 
 </html>
