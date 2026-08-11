@@ -632,16 +632,6 @@ body {
     gap: 10px;
 }
 
-.modal-card {
-    position: relative;
-    overflow: hidden;
-    padding-bottom: 20px;
-}
-
-.modal-card.has-unsaved-bar {
-    padding-bottom: 70px;
-}
-
 .image-preview-grid {
     display: flex;
     gap: 8px;
