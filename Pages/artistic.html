@@ -1,461 +1,456 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artist Studio</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=4">
 </head>
+
 <body>
 
-<div class="listChannels__1" id="appRoot" data-active-view="channels">
+    <div class="listChannels__1" id="appRoot" data-active-view="channels">
 
-    <!-- Modal TOS Popup -->
-    <div id="tosModal" class="modal-overlay">
-        <div class="modal-card">
-            <h3>Terms of Service Agreement</h3>
-            <p class="subtitle">Please review and confirm before submitting your commission request.</p>
+        <!-- Modal TOS Popup -->
+        <div id="tosModal" class="modal-overlay">
+            <div class="modal-card">
+                <h3>Terms of Service Agreement</h3>
+                <p class="subtitle">Please review and confirm before submitting your commission request.</p>
 
-            <div class="modal-tos-box">
-                <p><strong>1. Payment:</strong> 50% deposit required after sketch approval. Final delivery upon full payment.</p>
-                <p style="margin-top: 6px;"><strong>2. Revisions:</strong> 3 minor revisions included during sketch phase.</p>
-                <p style="margin-top: 6px;"><strong>3. Usage:</strong> Personal non-commercial use only unless commercial rights are purchased.</p>
-                <p style="margin-top: 6px;"><strong>4. Refunds:</strong> Non-refundable once drawing phase begins.</p>
+                <div class="modal-tos-box">
+                    <p><strong>1. Payment:</strong> 50% deposit required after sketch approval. Final delivery upon full payment.</p>
+                    <p style="margin-top: 6px;"><strong>2. Revisions:</strong> 3 minor revisions included during sketch phase.</p>
+                    <p style="margin-top: 6px;"><strong>3. Usage:</strong> Personal non-commercial use only unless commercial rights are purchased.</p>
+                    <p style="margin-top: 6px;"><strong>4. Refunds:</strong> Non-refundable once drawing phase begins.</p>
+                </div>
+
+                <label class="checkbox-group">
+                    <input type="checkbox" id="tosCheck" onchange="toggleSubmitBtn()">
+                    <span>I have read, understood, and agree to the Terms of Service.</span>
+                </label>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeTosModal()">Cancel</button>
+                    <button type="button" id="confirmSubmitBtn" class="submit-btn" style="width: auto; padding: 10px 20px;" disabled onclick="confirmOrder()">Confirm & Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal-overlay">
+            <div class="modal-card">
+                <h3>Account Login</h3>
+                <p class="subtitle">Enter your details or register using an invitation code.</p>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>Invite Code (Required if creating a new account)</label>
+                    <input type="text" id="loginInviteCode" placeholder="Enter special code">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeLoginModal()">Cancel</button>
+                    <button type="button" class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="handleLogin()">Login / Register</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Channels Container -->
+        <div class="containerChannels__1">
+            <div class="containerProfile__1">
+
+                <div class="profile-card">
+                    <div class="banner">
+                        <div class="banner-controls">
+                            <!-- Home Button -->
+                            <a href="/" id="homeBannerBtn" class="banner-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                    <polyline points="9 22 9 12 15 12 15 22" />
+                                </svg>
+                            </a>
+                            <!-- Logged Out View -->
+                            <button id="loginBannerBtn" class="banner-btn" onclick="openLoginModal()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                    <polyline points="10 17 15 12 10 7" />
+                                    <line x1="15" y1="12" x2="3" y2="12" />
+                                </svg>
+                                Login
+                            </button>
+                            <!-- Logged In Controls (Hidden by default) -->
+                            <button id="editBannerBtn" class="banner-btn" style="display: none;" onclick="alert('Edit options opened')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20h9" />
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                </svg>
+                            </button>
+                            <button id="settingsBannerBtn" class="banner-btn" style="display: none;" onclick="alert('Settings opened')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="3" />
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="banner-fill">
+                            <svg class="banner-svg" width="100%" height="105">
+                                <mask id="avatar-cutout" maskUnits="userSpaceOnUse">
+                                    <rect fill="white" x="0" y="0" width="100%" height="100%"></rect>
+                                    <circle fill="black" cx="56" cy="101" r="46"></circle>
+                                </mask>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="avatar-container">
+                        <img src="https://picsum.photos/1920/1080" class="avatar" alt="Profile Picture">
+                    </div>
+                </div>
+
+                <div class="profile-details">
+                    <div class="profile-padding">
+                        <div class="profile-header">
+                            <h2 class="profile-name">Artist Studio</h2>
+                            <span class="role-badge" title="Founder">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M2 19h20v2H2v-2zm1.15-12.8L8 10.5 12 4l4 6.5 4.85-4.3 1.15 11.8H2l1.15-11.8z" />
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="profile-info">
+                            <span class="profile-username">@artist_handle</span>
+                            <span class="profile-pronouns">He/Him</span>
+                        </div>
+                    </div>
+                    <div class="profile-status-list">
+                        <div class="profile-status open">
+                            <span class="profile-status-dot"></span>
+                            <span>Commissions [3/5]</span>
+                        </div>
+                        <div class="profile-status selective">
+                            <span class="profile-status-dot"></span>
+                            <span>Art Trades [Selective]</span>
+                        </div>
+                        <div class="profile-status closed">
+                            <span class="profile-status-dot"></span>
+                            <span>Requests [Closed]</span>
+                        </div>
+                    </div>
+                    <p class="profile-bio">
+                        Digital Illustrator & Concept Artist. Commissions are currently OPEN! Check options & queue below.
+                    </p>
+                </div>
+
             </div>
 
-            <label class="checkbox-group">
-                <input type="checkbox" id="tosCheck" onchange="toggleSubmitBtn()">
-                <span>I have read, understood, and agree to the Terms of Service.</span>
-            </label>
+            <!-- Navigation Buttons -->
+            <div class="channelList__1">
+                <div class="channelButton__0 active" id="btn-pricing" role="button" onclick="showTab('pricing', 'Pricing & Info')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                    </svg>
+                    <span>Pricing</span>
+                </div>
 
-            <div class="modal-actions">
-                <button type="button" class="btn-secondary" onclick="closeTosModal()">Cancel</button>
-                <button type="button" id="confirmSubmitBtn" class="submit-btn" style="width: auto; padding: 10px 20px;" disabled onclick="confirmOrder()">Confirm & Submit</button>
+                <div class="channelButton__0" id="btn-gallery" role="button" onclick="showTab('gallery', 'Art Gallery')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                    <span>Gallery</span>
+                </div>
+
+                <div class="channelButton__0" id="btn-progress" role="button" onclick="showTab('progress', 'Work Progress')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <path d="M8 7v10" />
+                        <path d="M12 7v6" />
+                        <path d="M16 7v8" />
+                    </svg>
+                    <span>Progress Board</span>
+                </div>
+
+                <div class="channelButton__0" id="btn-order" role="button" onclick="showTab('order', 'Order Form')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                    <span>Order Form</span>
+                </div>
+
+                <div class="channelButton__0" id="btn-tos" role="button" onclick="showTab('tos', 'Terms of Service')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>Terms of Service</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages / Dynamic Content Area -->
+        <div class="listMessages__1">
+            <div class="containerMessages__1">
+                <div class="mobile-header">
+                    <button class="btn-nav" onclick="switchView('channels')">← Menu</button>
+                    <h3 id="mobileHeaderTitle">Pricing & Info</h3>
+                </div>
+
+                <div class="content-body">
+
+                    <!-- 1. PRICING PANEL -->
+                    <div id="pricing" class="view-panel active">
+                        <div class="panel-header">
+                            <h2>Commission Pricing</h2>
+                            <p>Base rates for standard art commissions. Click a card to start an order.</p>
+                        </div>
+                        <div class="pricing-grid">
+                            <div class="card pricing-card" onclick="selectPricingOption('Headshot / Icon')">
+                                <div class="pricing-carousel" id="carousel-headshot">
+                                    <button type="button" class="carousel-btn prev" onclick="event.stopPropagation(); cycleCarousel('carousel-headshot', -1)">&lt;</button>
+                                    <img src="https://picsum.photos/400/300?random=11" class="active" alt="Headshot Example 1">
+                                    <img src="https://picsum.photos/400/300?random=12" alt="Headshot Example 2">
+                                    <img src="https://picsum.photos/400/300?random=13" alt="Headshot Example 3">
+                                    <button type="button" class="carousel-btn next" onclick="event.stopPropagation(); cycleCarousel('carousel-headshot', 1)">&gt;</button>
+                                </div>
+                                <h4>Headshot / Icon</h4>
+                                <div class="price">$35</div>
+                                <ul>
+                                    <li>✓ Fully shaded & colored</li>
+                                    <li>✓ High-res digital PNG</li>
+                                    <li>✓ Simple background included</li>
+                                </ul>
+                            </div>
+                            <div class="card pricing-card" onclick="selectPricingOption('Half Body')">
+                                <div class="pricing-carousel" id="carousel-halfbody">
+                                    <button type="button" class="carousel-btn prev" onclick="event.stopPropagation(); cycleCarousel('carousel-halfbody', -1)">&lt;</button>
+                                    <img src="https://picsum.photos/400/300?random=21" class="active" alt="Half Body Example 1">
+                                    <img src="https://picsum.photos/400/300?random=22" alt="Half Body Example 2">
+                                    <img src="https://picsum.photos/400/300?random=23" alt="Half Body Example 3">
+                                    <button type="button" class="carousel-btn next" onclick="event.stopPropagation(); cycleCarousel('carousel-halfbody', 1)">&gt;</button>
+                                </div>
+                                <h4>Half Body</h4>
+                                <div class="price">$65</div>
+                                <ul>
+                                    <li>✓ Detailed character art</li>
+                                    <li>✓ Expressive posing</li>
+                                    <li>✓ Transparent or simple backdrop</li>
+                                </ul>
+                            </div>
+                            <div class="card pricing-card" onclick="selectPricingOption('Full Body Illustration')">
+                                <div class="pricing-carousel" id="carousel-fullbody">
+                                    <button type="button" class="carousel-btn prev" onclick="event.stopPropagation(); cycleCarousel('carousel-fullbody', -1)">&lt;</button>
+                                    <img src="https://picsum.photos/400/300?random=31" class="active" alt="Full Body Example 1">
+                                    <img src="https://picsum.photos/400/300?random=32" alt="Full Body Example 2">
+                                    <img src="https://picsum.photos/400/300?random=33" alt="Full Body Example 3">
+                                    <button type="button" class="carousel-btn next" onclick="event.stopPropagation(); cycleCarousel('carousel-fullbody', 1)">&gt;</button>
+                                </div>
+                                <h4>Full Body Illustration</h4>
+                                <div class="price">$100</div>
+                                <ul>
+                                    <li>✓ Complete character rendition</li>
+                                    <li>✓ Full lighting & details</li>
+                                    <li>✓ Complex prop support (+$15)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. GALLERY PANEL -->
+                    <div id="gallery" class="view-panel">
+                        <div class="panel-header">
+                            <h2>Art Gallery</h2>
+                            <p>A showcase of recent artwork and personal art projects.</p>
+                        </div>
+                        <div class="gallery-grid">
+                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=1" alt="Artwork 1"></div>
+                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=2" alt="Artwork 2"></div>
+                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=3" alt="Artwork 3"></div>
+                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=4" alt="Artwork 4"></div>
+                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=5" alt="Artwork 5"></div>
+                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=6" alt="Artwork 6"></div>
+                        </div>
+                    </div>
+
+                    <!-- 3. PROGRESS TRELLO BOARD -->
+                    <div id="progress" class="view-panel">
+                        <div class="panel-header">
+                            <h2>Live Commission Queue</h2>
+                            <p>Track current project statuses in real-time.</p>
+                        </div>
+                        <div class="kanban-board">
+                            <div class="kanban-column">
+                                <h4>Queued</h4>
+                                <div class="kanban-card">
+                                    <div class="client-name">Alex M.</div>
+                                    <div>Full Body Character</div>
+                                    <span class="tag">Awaiting Sketch</span>
+                                </div>
+                                <div class="kanban-card">
+                                    <div class="client-name">Sam K.</div>
+                                    <div>Profile Icon</div>
+                                    <span class="tag">Queued</span>
+                                </div>
+                            </div>
+                            <div class="kanban-column">
+                                <h4>In Progress</h4>
+                                <div class="kanban-card">
+                                    <div class="client-name">Jordan P.</div>
+                                    <div>Half Body Scene</div>
+                                    <span class="tag" style="background: rgba(234, 179, 8, 0.2); color: #fde047;">Lineart Phase</span>
+                                </div>
+                            </div>
+                            <div class="kanban-column">
+                                <h4>Completed</h4>
+                                <div class="kanban-card">
+                                    <div class="client-name">Taylor R.</div>
+                                    <div>Headshot / Icon</div>
+                                    <span class="tag" style="background: rgba(34, 197, 94, 0.2); color: #86efac;">Delivered</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. ORDER FORM PANEL -->
+                    <div id="order" class="view-panel">
+                        <div class="panel-header">
+                            <h2>Commission Order Form</h2>
+                            <p>Submit your project details to request a commission slot.</p>
+                        </div>
+                        <form id="commissionForm" onsubmit="event.preventDefault(); openTosModal();">
+                            <div class="form-group">
+                                <label>Client Name / Handle</label>
+                                <input type="text" required placeholder="e.g. @username">
+                            </div>
+                            <div class="form-group">
+                                <label>Commission Type</label>
+                                <select id="orderTypeSelect" required>
+                                    <option value="">Select a type...</option>
+                                    <option value="Headshot / Icon">Headshot / Icon ($35)</option>
+                                    <option value="Half Body">Half Body ($65)</option>
+                                    <option value="Full Body Illustration">Full Body Illustration ($100)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Character Reference / Description</label>
+                                <textarea rows="4" required placeholder="Describe your character, pose ideas, or link reference images..."></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">Review Order & TOS</button>
+                        </form>
+                    </div>
+
+                    <!-- 5. TERMS OF SERVICE PANEL -->
+                    <div id="tos" class="view-panel">
+                        <div class="panel-header">
+                            <h2>Terms of Service</h2>
+                            <p>Please review my policies regarding payments, revisions, and usage rights.</p>
+                        </div>
+                        <div class="card" style="display: flex; flex-direction: column; gap: 12px; line-height: 1.6; color: rgba(255, 255, 255, 0.85);">
+                            <p><strong>1. Payment:</strong> A 50% upfront deposit is required once the initial rough sketch is approved. Remaining balance is due prior to full-resolution file delivery.</p>
+                            <p><strong>2. Revisions:</strong> Minor changes can be requested during the sketch phase. Major redraws after sketch approval may incur additional fees.</p>
+                            <p><strong>3. Usage & Rights:</strong> Artwork is strictly for personal, non-commercial use unless explicit commercial licensing rights are purchased separately.</p>
+                            <p><strong>4. Refunds:</strong> Deposits are non-refundable once the final drawing/coloring phase has commenced.</p>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal-overlay">
-        <div class="modal-card">
-            <h3>Account Login</h3>
-            <p class="subtitle">Enter your details or register using an invitation code.</p>
+    <script>
+        let isLoggedIn = false;
 
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" id="loginEmail" placeholder="name@example.com">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="loginPassword" placeholder="••••••••">
-            </div>
-            <div class="form-group">
-                <label>Invite Code (Required if creating a new account)</label>
-                <input type="text" id="loginInviteCode" placeholder="Enter special code">
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="btn-secondary" onclick="closeLoginModal()">Cancel</button>
-                <button type="button" class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="handleLogin()">Login / Register</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Channels Container -->
-    <div class="containerChannels__1">
-        <div class="containerProfile__1">
-
-            <div class="profile-card">
-                <div class="banner">
-                    <div class="banner-controls">
-                        <!-- Home Button -->
-                        <a href="/" id="homeBannerBtn" class="banner-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                                <polyline points="9 22 9 12 15 12 15 22" />
-                            </svg>
-                        </a>
-                        <!-- Logged Out View -->
-                        <button id="loginBannerBtn" class="banner-btn" onclick="openLoginModal()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                                <polyline points="10 17 15 12 10 7" />
-                                <line x1="15" y1="12" x2="3" y2="12" />
-                            </svg>
-                            Login
-                        </button>
-                        <!-- Logged In Controls (Hidden by default) -->
-                        <button id="editBannerBtn" class="banner-btn" style="display: none;" onclick="alert('Edit options opened')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 20h9" />
-                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                            </svg>
-                        </button>
-                        <button id="settingsBannerBtn" class="banner-btn" style="display: none;" onclick="alert('Settings opened')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="3" />
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div class="banner-fill">
-                        <svg class="banner-svg" viewBox="0 0 100% 105">
-                            <mask id="avatar-cutout" maskUnits="userSpaceOnUse">
-                                <rect fill="white" x="0" y="0" width="100%" height="100%"></rect>
-                                <circle fill="black" cx="56" cy="101" r="46"></circle>
-                            </mask>
-                        </svg>
-                    </div>
-                </div>
-                <div class="avatar-container">
-                    <img src="https://picsum.photos/1920/1080" class="avatar" alt="Profile Picture">
-                </div>
-            </div>
-
-            <div class="profile-details">
-                <div class="profile-padding">
-                    <div class="profile-header">
-                        <h2 class="profile-name">Artist Studio</h2>
-                        <span class="role-badge" title="Founder">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M2 19h20v2H2v-2zm1.15-12.8L8 10.5 12 4l4 6.5 4.85-4.3 1.15 11.8H2l1.15-11.8z" />
-                            </svg>
-                        </span>
-                    </div>
-                    <div class="profile-info">
-                        <span class="profile-username">@artist_handle</span>
-                        <span class="profile-pronouns">He/Him</span>
-                    </div>
-                </div>
-                <div class="profile-status-list">
-                    <div class="profile-status open">
-                        <span class="profile-status-dot"></span>
-                        <span>Commissions [3/5]</span>
-                    </div>
-                    <div class="profile-status selective">
-                        <span class="profile-status-dot"></span>
-                        <span>Art Trades [Selective]</span>
-                    </div>
-                    <div class="profile-status closed">
-                        <span class="profile-status-dot"></span>
-                        <span>Requests [Closed]</span>
-                    </div>
-                </div>
-                <p class="profile-bio">
-                    Digital Illustrator & Concept Artist. Commissions are currently OPEN! Check options & queue below.
-                </p>
-            </div>
-
-        </div>
-
-        <!-- Navigation Buttons -->
-        <div class="channelList__1">
-            <div class="channelButton__0 active" id="btn-pricing" role="button" onclick="showTab('pricing', 'Pricing & Info')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="1" x2="12" y2="23" />
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
-                <span>Pricing</span>
-            </div>
-
-            <div class="channelButton__0" id="btn-gallery" role="button" onclick="showTab('gallery', 'Art Gallery')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <polyline points="21 15 16 10 5 21" />
-                </svg>
-                <span>Gallery</span>
-            </div>
-
-            <div class="channelButton__0" id="btn-progress" role="button" onclick="showTab('progress', 'Work Progress')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <path d="M8 7v10" />
-                    <path d="M12 7v6" />
-                    <path d="M16 7v8" />
-                </svg>
-                <span>Progress Board</span>
-            </div>
-
-            <div class="channelButton__0" id="btn-order" role="button" onclick="showTab('order', 'Order Form')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                    <polyline points="10 9 9 9 8 9" />
-                </svg>
-                <span>Order Form</span>
-            </div>
-
-            <div class="channelButton__0" id="btn-tos" role="button" onclick="showTab('tos', 'Terms of Service')">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-                <span>Terms of Service</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Messages / Dynamic Content Area -->
-    <div class="listMessages__1">
-        <div class="containerMessages__1">
-            <div class="mobile-header">
-                <button class="btn-nav" onclick="switchView('channels')">← Menu</button>
-                <h3 id="mobileHeaderTitle">Pricing & Info</h3>
-            </div>
-
-            <div class="content-body">
-
-                <!-- 1. PRICING PANEL -->
-                <div id="pricing" class="view-panel active">
-                    <div class="panel-header">
-                        <h2>Commission Pricing</h2>
-                        <p>Base rates for standard art commissions. Click a card to start an order.</p>
-                    </div>
-                    <div class="pricing-grid">
-                        <div class="card pricing-card" onclick="selectPricingOption('Headshot / Icon')">
-                            <div class="pricing-carousel" id="carousel-headshot">
-                                <button type="button" class="carousel-btn prev" onclick="event.stopPropagation(); cycleCarousel('carousel-headshot', -1)">&lt;</button>
-                                <img src="https://picsum.photos/400/300?random=11" class="active" alt="Headshot Example 1">
-                                <img src="https://picsum.photos/400/300?random=12" alt="Headshot Example 2">
-                                <img src="https://picsum.photos/400/300?random=13" alt="Headshot Example 3">
-                                <button type="button" class="carousel-btn next" onclick="event.stopPropagation(); cycleCarousel('carousel-headshot', 1)">&gt;</button>
-                            </div>
-                            <h4>Headshot / Icon</h4>
-                            <div class="price">$35</div>
-                            <ul>
-                                <li>✓ Fully shaded & colored</li>
-                                <li>✓ High-res digital PNG</li>
-                                <li>✓ Simple background included</li>
-                            </ul>
-                        </div>
-                        <div class="card pricing-card" onclick="selectPricingOption('Half Body')">
-                            <div class="pricing-carousel" id="carousel-halfbody">
-                                <button type="button" class="carousel-btn prev" onclick="event.stopPropagation(); cycleCarousel('carousel-halfbody', -1)">&lt;</button>
-                                <img src="https://picsum.photos/400/300?random=21" class="active" alt="Half Body Example 1">
-                                <img src="https://picsum.photos/400/300?random=22" alt="Half Body Example 2">
-                                <img src="https://picsum.photos/400/300?random=23" alt="Half Body Example 3">
-                                <button type="button" class="carousel-btn next" onclick="event.stopPropagation(); cycleCarousel('carousel-halfbody', 1)">&gt;</button>
-                            </div>
-                            <h4>Half Body</h4>
-                            <div class="price">$65</div>
-                            <ul>
-                                <li>✓ Detailed character art</li>
-                                <li>✓ Expressive posing</li>
-                                <li>✓ Transparent or simple backdrop</li>
-                            </ul>
-                        </div>
-                        <div class="card pricing-card" onclick="selectPricingOption('Full Body Illustration')">
-                            <div class="pricing-carousel" id="carousel-fullbody">
-                                <button type="button" class="carousel-btn prev" onclick="event.stopPropagation(); cycleCarousel('carousel-fullbody', -1)">&lt;</button>
-                                <img src="https://picsum.photos/400/300?random=31" class="active" alt="Full Body Example 1">
-                                <img src="https://picsum.photos/400/300?random=32" alt="Full Body Example 2">
-                                <img src="https://picsum.photos/400/300?random=33" alt="Full Body Example 3">
-                                <button type="button" class="carousel-btn next" onclick="event.stopPropagation(); cycleCarousel('carousel-fullbody', 1)">&gt;</button>
-                            </div>
-                            <h4>Full Body Illustration</h4>
-                            <div class="price">$100</div>
-                            <ul>
-                                <li>✓ Complete character rendition</li>
-                                <li>✓ Full lighting & details</li>
-                                <li>✓ Complex prop support (+$15)</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. GALLERY PANEL -->
-                <div id="gallery" class="view-panel">
-                    <div class="panel-header">
-                        <h2>Art Gallery</h2>
-                        <p>A showcase of recent artwork and personal art projects.</p>
-                    </div>
-                    <div class="gallery-grid">
-                        <div class="gallery-item"><img src="https://picsum.photos/400/400?random=1" alt="Artwork 1"></div>
-                        <div class="gallery-item"><img src="https://picsum.photos/400/400?random=2" alt="Artwork 2"></div>
-                        <div class="gallery-item"><img src="https://picsum.photos/400/400?random=3" alt="Artwork 3"></div>
-                        <div class="gallery-item"><img src="https://picsum.photos/400/400?random=4" alt="Artwork 4"></div>
-                        <div class="gallery-item"><img src="https://picsum.photos/400/400?random=5" alt="Artwork 5"></div>
-                        <div class="gallery-item"><img src="https://picsum.photos/400/400?random=6" alt="Artwork 6"></div>
-                    </div>
-                </div>
-
-                <!-- 3. PROGRESS TRELLO BOARD -->
-                <div id="progress" class="view-panel">
-                    <div class="panel-header">
-                        <h2>Live Commission Queue</h2>
-                        <p>Track current project statuses in real-time.</p>
-                    </div>
-                    <div class="kanban-board">
-                        <div class="kanban-column">
-                            <h4>Queued</h4>
-                            <div class="kanban-card">
-                                <div class="client-name">Alex M.</div>
-                                <div>Full Body Character</div>
-                                <span class="tag">Awaiting Sketch</span>
-                            </div>
-                            <div class="kanban-card">
-                                <div class="client-name">Sam K.</div>
-                                <div>Profile Icon</div>
-                                <span class="tag">Queued</span>
-                            </div>
-                        </div>
-                        <div class="kanban-column">
-                            <h4>In Progress</h4>
-                            <div class="kanban-card">
-                                <div class="client-name">Jordan P.</div>
-                                <div>Half Body Scene</div>
-                                <span class="tag" style="background: rgba(234, 179, 8, 0.2); color: #fde047;">Lineart Phase</span>
-                            </div>
-                        </div>
-                        <div class="kanban-column">
-                            <h4>Completed</h4>
-                            <div class="kanban-card">
-                                <div class="client-name">Taylor R.</div>
-                                <div>Headshot / Icon</div>
-                                <span class="tag" style="background: rgba(34, 197, 94, 0.2); color: #86efac;">Delivered</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. ORDER FORM PANEL -->
-                <div id="order" class="view-panel">
-                    <div class="panel-header">
-                        <h2>Commission Order Form</h2>
-                        <p>Submit your project details to request a commission slot.</p>
-                    </div>
-                    <form id="commissionForm" onsubmit="event.preventDefault(); openTosModal();">
-                        <div class="form-group">
-                            <label>Client Name / Handle</label>
-                            <input type="text" required placeholder="e.g. @username">
-                        </div>
-                        <div class="form-group">
-                            <label>Commission Type</label>
-                            <select id="orderTypeSelect" required>
-                                <option value="">Select a type...</option>
-                                <option value="Headshot / Icon">Headshot / Icon ($35)</option>
-                                <option value="Half Body">Half Body ($65)</option>
-                                <option value="Full Body Illustration">Full Body Illustration ($100)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Character Reference / Description</label>
-                            <textarea rows="4" required placeholder="Describe your character, pose ideas, or link reference images..."></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn">Review Order & TOS</button>
-                    </form>
-                </div>
-
-                <!-- 5. TERMS OF SERVICE PANEL -->
-                <div id="tos" class="view-panel">
-                    <div class="panel-header">
-                        <h2>Terms of Service</h2>
-                        <p>Please review my policies regarding payments, revisions, and usage rights.</p>
-                    </div>
-                    <div class="card" style="display: flex; flex-direction: column; gap: 12px; line-height: 1.6; color: rgba(255, 255, 255, 0.85);">
-                        <p><strong>1. Payment:</strong> A 50% upfront deposit is required once the initial rough sketch is approved. Remaining balance is due prior to full-resolution file delivery.</p>
-                        <p><strong>2. Revisions:</strong> Minor changes can be requested during the sketch phase. Major redraws after sketch approval may incur additional fees.</p>
-                        <p><strong>3. Usage & Rights:</strong> Artwork is strictly for personal, non-commercial use unless explicit commercial licensing rights are purchased separately.</p>
-                        <p><strong>4. Refunds:</strong> Deposits are non-refundable once the final drawing/coloring phase has commenced.</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    let isLoggedIn = false;
-
-    function switchView(view) {
-        const root = document.getElementById('appRoot');
-        root.setAttribute('data-active-view', view);
-    }
-
-    function showTab(tabId, title) {
-        document.querySelectorAll('.view-panel').forEach(panel => {
-            panel.classList.remove('active');
-        });
-        const target = document.getElementById(tabId);
-        if (target) target.classList.add('active');
-
-        document.querySelectorAll('.channelButton__0').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        const activeBtn = document.getElementById('btn-' + tabId);
-        if (activeBtn) activeBtn.classList.add('active');
-
-        document.getElementById('mobileHeaderTitle').textContent = title;
-        switchView('messages');
-    }
-
-    function openLoginModal() {
-        document.getElementById('loginModal').classList.add('active');
-    }
-
-    function closeLoginModal() {
-        document.getElementById('loginModal').classList.remove('active');
-    }
-
-    function handleLogin() {
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        const inviteCode = document.getElementById('loginInviteCode').value;
-
-        if (!email || !password) {
-            alert('Please fill out your email and password.');
-            return;
+        function switchView(view) {
+            const root = document.getElementById('appRoot');
+            root.setAttribute('data-active-view', view);
         }
 
-        // Simulate login state
-        isLoggedIn = true;
-        document.getElementById('loginBannerBtn').style.display = 'none';
-        document.getElementById('editBannerBtn').style.display = 'flex';
-        document.getElementById('settingsBannerBtn').style.display = 'flex';
-
-        closeLoginModal();
-    }
-
-    function cycleCarousel(carouselId, direction) {
-        const carousel = document.getElementById(carouselId);
-        const images = carousel.querySelectorAll('img');
-        let activeIndex = Array.from(images).findIndex(img => img.classList.contains('active'));
-
-        images[activeIndex].classList.remove('active');
-        activeIndex = (activeIndex + direction + images.length) % images.length;
-        images[activeIndex].classList.add('active');
-    }
-
-    function selectPricingOption(type) {
-        const select = document.getElementById('orderTypeSelect');
-        if (select) {
-            select.value = type;
+        function showTab(tabId, title) {
+            document.querySelectorAll('.view-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+            document.querySelectorAll('.channelButton__0').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) activeBtn.classList.add('active');
+            document.getElementById('mobileHeaderTitle').textContent = title;
+            switchView('messages');
         }
-        showTab('order', 'Order Form');
-    }
 
-    function openTosModal() {
-        document.getElementById('tosModal').classList.add('active');
-    }
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
 
-    function closeTosModal() {
-        document.getElementById('tosModal').classList.remove('active');
-    }
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
 
-    function toggleSubmitBtn() {
-        const check = document.getElementById('tosCheck');
-        document.getElementById('confirmSubmitBtn').disabled = !check.checked;
-    }
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const inviteCode = document.getElementById('loginInviteCode').value;
+            if (!email || !password) {
+                alert('Please fill out your email and password.');
+                return;
+            }
+            isLoggedIn = true;
+            document.getElementById('loginBannerBtn').style.display = 'none';
+            document.getElementById('editBannerBtn').style.display = 'flex';
+            document.getElementById('settingsBannerBtn').style.display = 'flex';
+            closeLoginModal();
+        }
 
-    function confirmOrder() {
-        alert('Order submitted successfully!');
-        closeTosModal();
-    }
-</script>
+        function cycleCarousel(carouselId, direction) {
+            const carousel = document.getElementById(carouselId);
+            const images = carousel.querySelectorAll('img');
+            let activeIndex = Array.from(images).findIndex(img => img.classList.contains('active'));
+            images[activeIndex].classList.remove('active');
+            activeIndex = (activeIndex + direction + images.length) % images.length;
+            images[activeIndex].classList.add('active');
+        }
 
+        function selectPricingOption(type) {
+            const select = document.getElementById('orderTypeSelect');
+            if (select) {
+                select.value = type;
+            }
+            showTab('order', 'Order Form');
+        }
+
+        function openTosModal() {
+            document.getElementById('tosModal').classList.add('active');
+        }
+
+        function closeTosModal() {
+            document.getElementById('tosModal').classList.remove('active');
+        }
+
+        function toggleSubmitBtn() {
+            const check = document.getElementById('tosCheck');
+            document.getElementById('confirmSubmitBtn').disabled = !check.checked;
+        }
+
+        function confirmOrder() {
+            alert('Order submitted successfully!');
+            closeTosModal();
+        }
+    </script>
 </body>
+
 </html>
