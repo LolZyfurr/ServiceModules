@@ -27,6 +27,7 @@ body {
 
 .containerChannels__1::-webkit-scrollbar,
 .containerMessages__1::-webkit-scrollbar,
+.modal-card::-webkit-scrollbar,
 .modal-tos-box::-webkit-scrollbar {
     display: none;
     width: 0;
@@ -501,6 +502,7 @@ body {
     overflow-x: hidden;
     position: relative;
     scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .modal-card h3 {
