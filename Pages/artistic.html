@@ -80,13 +80,7 @@
                     </div>
 
                     <div id="pricingReorderList">
-                        <!-- Dynamic List Items will render here.
-                     Example row format for dynamic JS generation:
-                <div class="reorder-item" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
-                    <input type="text" class="form-input" value="Sample Item" oninput="markPricingMainDirty()" />
-                    <button type="button" class="btn-danger" style="padding: 4px 8px; font-size: 0.8rem;" onclick="removePricingItem(this)">Remove</button>
-                </div>
-                -->
+
                     </div>
                 </div>
 
@@ -154,6 +148,122 @@
                     <div class="bar-actions">
                         <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="discardPricingItemChanges()">Discard</button>
                         <button type="button" class="submit-btn" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="savePricingItemChanges()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Form Main Edit Modal -->
+        <div id="orderMainEditModal" class="modal-overlay">
+            <div class="modal-card" id="orderMainEditCard">
+                <h3>Edit Order Form Section</h3>
+                <p class="subtitle">Update channel description and manage order form layout.</p>
+
+                <div class="form-group">
+                    <label>Section Description</label>
+                    <textarea id="editOrderDescription" rows="2" oninput="markOrderMainDirty()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="margin-bottom: 0;">Reorder & Edit Fields</label>
+                        <!-- Add New Field Button -->
+                        <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="addOrderItem()">+ Add Field</button>
+                    </div>
+
+                    <div id="orderReorderList">
+
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="tryCloseOrderMainModal()">Close</button>
+                </div>
+
+                <!-- Unsaved Bar -->
+                <div id="orderMainUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="discardOrderMainChanges()">Discard</button>
+                        <button type="button" class="submit-btn" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="saveOrderMainChanges()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Question Type Selection Modal -->
+        <div id="orderTypeModal" class="modal-overlay">
+            <div class="modal-card">
+                <h3>Select Question Type</h3>
+                <p class="subtitle">Choose the type of field you want to add to your order form.</p>
+
+                <div class="form-group">
+                    <label>Field Type</label>
+                    <select id="newFieldTypeSelect">
+                        <option value="text">Short Text Input</option>
+                        <option value="textarea">Long Text Area</option>
+                        <option value="select">Dropdown Select</option>
+                        <option value="radio">Radio Buttons (Single Choice)</option>
+                        <option value="checkbox">Checkboxes (Multiple Choice)</option>
+                        <option value="file">File Upload</option>
+                        <option value="date">Date Picker</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="closeOrderTypeModal()">Cancel</button>
+                    <button type="button" class="submit-btn" style="width: auto; padding: 8px 16px;" onclick="confirmAddOrderItem()">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Order Item / Field Edit Modal -->
+        <div id="orderItemEditModal" class="modal-overlay">
+            <div class="modal-card" id="orderItemEditCard">
+                <h3 id="orderItemEditTitle">Edit Form Question</h3>
+                <p class="subtitle">Modify label, field name, placeholders, and choices.</p>
+
+                <div class="form-group">
+                    <label>Field Label / Question Title</label>
+                    <input type="text" id="editOrderFieldLabel" oninput="markOrderItemDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Internal Field Name (ID/Key)</label>
+                    <input type="text" id="editOrderFieldName" oninput="markOrderItemDirty()">
+                </div>
+
+                <div class="form-group" id="orderPlaceholderGroup">
+                    <label>Placeholder Text</label>
+                    <input type="text" id="editOrderFieldPlaceholder" oninput="markOrderItemDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="editOrderFieldRequired" onchange="markOrderItemDirty()">
+                        <span>Required Field</span>
+                    </label>
+                </div>
+
+                <!-- Dynamic Options container for select, radio, checkbox -->
+                <div class="form-group" id="orderOptionsGroup" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="margin:0;">Options / Choices</label>
+                        <button type="button" class="icon-btn" onclick="addOrderOptionInput()" title="Add Option">+</button>
+                    </div>
+                    <div id="editOrderOptionsContainer"></div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="tryCloseOrderItemModal()">Back</button>
+                </div>
+
+                <!-- Unsaved Bar -->
+                <div id="orderItemUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="discardOrderItemChanges()">Discard</button>
+                        <button type="button" class="submit-btn" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="saveOrderItemChanges()">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -305,37 +415,24 @@
                         </div>
                         <div class="kanban-board" id="progress-container">
 
-
-
                         </div>
                     </div>
 
                     <!-- 4. ORDER FORM PANEL -->
                     <div id="order" class="view-panel">
-                        <div class="panel-header">
-                            <h2>Commission Order Form</h2>
-                            <p>Submit your project details to request a commission slot.</p>
+                        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h2>Commission Order Form</h2>
+                                <p id="orderHeaderDesc">Submit your project details to request a commission slot.</p>
+                            </div>
+                            <button id="editOrderSectionBtn" class="header-edit-btn" style="display: none;" onclick="openOrderMainModal()" title="Edit Order Form Section">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20h9" />
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                </svg>
+                            </button>
                         </div>
-                        <form id="commissionForm" onsubmit="event.preventDefault(); openTosModal();">
-                            <div class="form-group">
-                                <label>Client Name / Handle</label>
-                                <input type="text" required placeholder="e.g. @username">
-                            </div>
-                            <div class="form-group">
-                                <label>Commission Type</label>
-                                <select id="orderTypeSelect" required>
-                                    <option value="">Select a type...</option>
-                                    <option value="Headshot / Icon">Headshot / Icon ($35)</option>
-                                    <option value="Half Body">Half Body ($65)</option>
-                                    <option value="Full Body Illustration">Full Body Illustration ($100)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Character Reference / Description</label>
-                                <textarea rows="4" required placeholder="Describe your character, pose ideas, or link reference images..."></textarea>
-                            </div>
-                            <button type="submit" class="submit-btn">Review Order & TOS</button>
-                        </form>
+                        <div id="order-container"></div>
                     </div>
 
                     <!-- 5. TERMS OF SERVICE PANEL -->
@@ -365,10 +462,9 @@
 
     <script type="module">
         import newPricingCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/pricingCard.js?t=1';
-
         import newProfileCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileCard.js?t=1';
-
         import newKanbanColumn from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/kanbanColumn.js?t=2';
+        import newFormCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/formCard.js?t=1';
 
         const exampleResponse = {
             user: {
@@ -470,10 +566,158 @@
                                 status: "Delivered"
                             }]
                         }
-                    ]
+                    ],
+                    Order: [{
+                        id: "commissionForm",
+                        submitText: "Review Order & TOS",
+                        onSubmit: null,
+                        fields: [{
+                                id: "clientName",
+                                name: "clientName",
+                                label: "Client Name / Handle",
+                                type: "text",
+                                required: true,
+                                placeholder: "e.g. @username"
+                            },
+                            {
+                                id: "commissionType",
+                                name: "commissionType",
+                                label: "Commission Type",
+                                type: "select",
+                                required: true,
+                                options: [{
+                                        label: "Select a type...",
+                                        value: "",
+                                        disabled: true,
+                                        selected: true
+                                    },
+                                    {
+                                        label: "Headshot / Icon ($35)",
+                                        value: "Headshot / Icon"
+                                    },
+                                    {
+                                        label: "Half Body ($65)",
+                                        value: "Half Body"
+                                    },
+                                    {
+                                        label: "Full Body Illustration ($100)",
+                                        value: "Full Body Illustration"
+                                    }
+                                ]
+                            },
+                            {
+                                id: "characterRef",
+                                name: "characterRef",
+                                label: "Character Reference / Description",
+                                type: "textarea",
+                                required: true,
+                                rows: 4,
+                                placeholder: "Describe your character, pose ideas, or link reference images..."
+                            },
+                            {
+                                id: "commercialUse",
+                                name: "commercialUse",
+                                label: "Commercial Usage Rights",
+                                type: "radio",
+                                required: false,
+                                options: [{
+                                        label: "Personal Use Only (Standard)",
+                                        value: "personal",
+                                        checked: true
+                                    },
+                                    {
+                                        label: "Commercial License (+50% fee)",
+                                        value: "commercial"
+                                    }
+                                ]
+                            },
+                            {
+                                id: "addons",
+                                name: "addons",
+                                label: "Add-ons & Extras",
+                                type: "checkbox",
+                                required: false,
+                                options: [{
+                                        label: "Detailed Background",
+                                        value: "background"
+                                    },
+                                    {
+                                        label: "Additional Character (+75%)",
+                                        value: "extra_character"
+                                    },
+                                    {
+                                        label: "Alternative Outfit / Version",
+                                        value: "nsfw"
+                                    },
+                                    {
+                                        label: "Layered PSD / Source File",
+                                        value: "source_file"
+                                    }
+                                ]
+                            },
+                            {
+                                id: "artStyle",
+                                name: "artStyle",
+                                label: "Preferred Art Style / Finish",
+                                type: "select",
+                                required: false,
+                                options: [{
+                                        label: "Select a style preference...",
+                                        value: "",
+                                        selected: true
+                                    },
+                                    {
+                                        label: "Cel Shaded / Flat Colors",
+                                        value: "cel_shaded"
+                                    },
+                                    {
+                                        label: "Soft Rendered / Painted",
+                                        value: "soft_render"
+                                    },
+                                    {
+                                        label: "Rough Sketch / Lineart",
+                                        value: "sketch"
+                                    }
+                                ]
+                            },
+                            {
+                                id: "referenceFiles",
+                                name: "referenceFiles",
+                                label: "Upload Reference Files / Images",
+                                type: "file",
+                                required: false,
+                                multiple: true,
+                                accept: "image/*,audio/*"
+                            },
+                            {
+                                id: "targetDate",
+                                name: "targetDate",
+                                label: "Preferred Deadline / Target Date",
+                                type: "date",
+                                required: false
+                            },
+                            {
+                                id: "contact",
+                                name: "contact",
+                                label: "Social Media Contact / Discord Tag",
+                                type: "text",
+                                required: false,
+                                placeholder: "e.g. username#0000 or @handle"
+                            },
+                            {
+                                id: "notes",
+                                name: "notes",
+                                label: "Additional Notes / Specific Requests",
+                                type: "textarea",
+                                required: false,
+                                rows: 3,
+                                placeholder: "Any additional details, moodboards, color palettes, or instructions..."
+                            }
+                        ]
+                    }]
                 },
             }
-        }
+        };
 
         window.selectPricingOption = (title) => {
             alert(`Selected option: ${title}`);
@@ -484,6 +728,9 @@
             if (!container) return;
             container.innerHTML = '';
             const profileData = window.profileData || exampleResponse.user.profile;
+            if (profileData?.banner) {
+                document.body.style.backgroundImage = `url("${profileData.banner}")`;
+            }
             const profile = newProfileCard({
                 avatar: profileData.avatar,
                 banner: profileData.banner
@@ -502,7 +749,6 @@
                     examples: item.examples,
                     features: item.features
                 });
-
                 card.parent('#pricing-container');
             });
         };
@@ -516,18 +762,34 @@
                     title: item.title,
                     items: item.items
                 });
-
                 column.parent('#progress-container');
+            });
+        };
+
+        window.renderFormCard = function() {
+            const container = document.getElementById('order-container');
+            if (!container) return;
+            container.innerHTML = '';
+            (window.orderData || exampleResponse.user.channels.Order).forEach(item => {
+                const form = newFormCard({
+                    id: item.id,
+                    submitText: item.submitText,
+                    onSubmit: item.onSubmit,
+                    fields: item.fields
+                });
+                form.parent('#order-container');
             });
         };
 
         window.profileData = exampleResponse.user.profile;
         window.pricingData = exampleResponse.user.channels.Pricing;
         window.progressData = exampleResponse.user.channels.Progress;
+        window.orderData = exampleResponse.user.channels.Order;
 
         window.renderProfileCard();
         window.renderPricingGrid();
         window.renderProgressGrid();
+        window.renderFormCard();
     </script>
 
     <script>
@@ -574,6 +836,8 @@
             document.getElementById('editBannerBtn').style.display = 'flex';
             document.getElementById('settingsBannerBtn').style.display = 'flex';
             document.getElementById('editPricingSectionBtn').style.display = 'inline-flex';
+            const editOrderBtn = document.getElementById('editOrderSectionBtn');
+            if (editOrderBtn) editOrderBtn.style.display = 'inline-flex';
             closeLoginModal();
         }
 
@@ -880,6 +1144,272 @@
             isPricingItemDirty = false;
             updatePricingItemUnsavedBar();
             document.getElementById('pricingItemEditModal').classList.remove('active');
+        }
+
+        /* --- Order Edit State Management --- */
+        let activeOrderMainDraft = null;
+        let isOrderMainDirty = false;
+
+        let editingOrderIndex = -1;
+        let activeOrderItemDraft = null;
+        let isOrderItemDirty = false;
+
+        function openOrderMainModal() {
+            const currentForm = (window.orderData && window.orderData[0]) ? window.orderData[0] : { fields: [] };
+            activeOrderMainDraft = {
+                description: document.getElementById('orderHeaderDesc') ? document.getElementById('orderHeaderDesc').textContent : "",
+                fields: JSON.parse(JSON.stringify(currentForm.fields || []))
+            };
+            isOrderMainDirty = false;
+            document.getElementById('editOrderDescription').value = activeOrderMainDraft.description;
+            renderOrderReorderList();
+            updateOrderMainUnsavedBar();
+            document.getElementById('orderMainEditModal').classList.add('active');
+        }
+
+        function renderOrderReorderList() {
+            const listContainer = document.getElementById('orderReorderList');
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+            activeOrderMainDraft.fields.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'edit-item-row';
+                row.innerHTML = `
+                    <div class="item-info">
+                        <strong>${item.label || item.name}</strong>
+                        <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">[${item.type}]</span>
+                    </div>
+                    <div class="item-actions">
+                        <button type="button" class="icon-btn" onclick="moveOrderItem(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+                        <button type="button" class="icon-btn" onclick="moveOrderItem(${idx}, 1)" ${idx === activeOrderMainDraft.fields.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+                        <button type="button" class="icon-btn" onclick="openOrderItemModal(${idx})" title="Edit Question">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </button>
+                        <button type="button" class="icon-btn danger-btn" onclick="removeOrderItem(${idx})" title="Remove Question">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(row);
+            });
+        }
+
+        /* --- Question Type Picker Modal Functions --- */
+        function addOrderItem() {
+            document.getElementById('orderTypeModal').classList.add('active');
+        }
+
+        function closeOrderTypeModal() {
+            document.getElementById('orderTypeModal').classList.remove('active');
+        }
+
+        function confirmAddOrderItem() {
+            const selectedType = document.getElementById('newFieldTypeSelect').value;
+            const newField = {
+                id: "field_" + Date.now(),
+                name: "field_" + Date.now(),
+                label: "New " + selectedType.charAt(0).toUpperCase() + selectedType.slice(1) + " Question",
+                type: selectedType,
+                required: false,
+                placeholder: "",
+                options: ["select", "radio", "checkbox"].includes(selectedType) ? [{ label: "Option 1", value: "option_1" }] : undefined
+            };
+
+            activeOrderMainDraft.fields.push(newField);
+            markOrderMainDirty();
+            renderOrderReorderList();
+            closeOrderTypeModal();
+
+            // Immediately open edit modal for newly created question
+            openOrderItemModal(activeOrderMainDraft.fields.length - 1);
+        }
+
+        function removeOrderItem(index) {
+            activeOrderMainDraft.fields.splice(index, 1);
+            markOrderMainDirty();
+            renderOrderReorderList();
+        }
+
+        function moveOrderItem(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= activeOrderMainDraft.fields.length) return;
+            const temp = activeOrderMainDraft.fields[index];
+            activeOrderMainDraft.fields[index] = activeOrderMainDraft.fields[newIndex];
+            activeOrderMainDraft.fields[newIndex] = temp;
+            markOrderMainDirty();
+            renderOrderReorderList();
+        }
+
+        function markOrderMainDirty() {
+            isOrderMainDirty = true;
+            updateOrderMainUnsavedBar();
+        }
+
+        function updateOrderMainUnsavedBar() {
+            const bar = document.getElementById('orderMainUnsavedBar');
+            const card = document.getElementById('orderMainEditCard');
+            if (isOrderMainDirty) {
+                bar.style.display = 'flex';
+                card.classList.add('has-unsaved-bar');
+            } else {
+                bar.style.display = 'none';
+                card.classList.remove('has-unsaved-bar');
+            }
+        }
+
+        function tryCloseOrderMainModal() {
+            if (isOrderMainDirty) {
+                alert('You have unsaved changes. Please choose Save or Discard below.');
+                return;
+            }
+            document.getElementById('orderMainEditModal').classList.remove('active');
+        }
+
+        function saveOrderMainChanges() {
+            activeOrderMainDraft.description = document.getElementById('editOrderDescription').value;
+            const headerDesc = document.getElementById('orderHeaderDesc');
+            if (headerDesc) headerDesc.textContent = activeOrderMainDraft.description;
+
+            if (window.orderData && window.orderData[0]) {
+                window.orderData[0].fields = JSON.parse(JSON.stringify(activeOrderMainDraft.fields));
+            }
+            if (typeof exampleResponse !== 'undefined' && exampleResponse.user?.channels?.Order?.[0]) {
+                exampleResponse.user.channels.Order[0].fields = JSON.parse(JSON.stringify(activeOrderMainDraft.fields));
+            }
+
+            if (typeof window.renderFormCard === 'function') {
+                window.renderFormCard();
+            }
+
+            isOrderMainDirty = false;
+            updateOrderMainUnsavedBar();
+            document.getElementById('orderMainEditModal').classList.remove('active');
+        }
+
+        function discardOrderMainChanges() {
+            const currentForm = (window.orderData && window.orderData[0]) ? window.orderData[0] : { fields: [] };
+            activeOrderMainDraft = {
+                description: document.getElementById('orderHeaderDesc') ? document.getElementById('orderHeaderDesc').textContent : "",
+                fields: JSON.parse(JSON.stringify(currentForm.fields || []))
+            };
+            document.getElementById('editOrderDescription').value = activeOrderMainDraft.description;
+            renderOrderReorderList();
+            isOrderMainDirty = false;
+            updateOrderMainUnsavedBar();
+            document.getElementById('orderMainEditModal').classList.remove('active');
+        }
+        
+        /* --- Single Order Item Edit Modal Logic --- */
+        function openOrderItemModal(index) {
+            editingOrderIndex = index;
+            activeOrderItemDraft = JSON.parse(JSON.stringify(activeOrderMainDraft.fields[index]));
+            isOrderItemDirty = false;
+
+            document.getElementById('orderItemEditTitle').textContent = `Edit Question: ${activeOrderItemDraft.label || activeOrderItemDraft.name}`;
+            document.getElementById('editOrderFieldLabel').value = activeOrderItemDraft.label || '';
+            document.getElementById('editOrderFieldName').value = activeOrderItemDraft.name || '';
+            document.getElementById('editOrderFieldPlaceholder').value = activeOrderItemDraft.placeholder || '';
+            document.getElementById('editOrderFieldRequired').checked = !!activeOrderItemDraft.required;
+
+            // Show/hide options input based on field type
+            const optionsGroup = document.getElementById('orderOptionsGroup');
+            if (["select", "radio", "checkbox"].includes(activeOrderItemDraft.type)) {
+                optionsGroup.style.display = 'block';
+                renderOrderOptionsInputs();
+            } else {
+                optionsGroup.style.display = 'none';
+            }
+
+            updateOrderItemUnsavedBar();
+            document.getElementById('orderItemEditModal').classList.add('active');
+        }
+
+        function renderOrderOptionsInputs() {
+            const container = document.getElementById('editOrderOptionsContainer');
+            container.innerHTML = '';
+            if (!activeOrderItemDraft.options) activeOrderItemDraft.options = [];
+
+            activeOrderItemDraft.options.forEach((opt, idx) => {
+                const optObj = typeof opt === 'string' ? { label: opt, value: opt } : opt;
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.gap = '8px';
+                row.style.marginBottom = '8px';
+
+                row.innerHTML = `
+                    <input type="text" placeholder="Option Label" value="${optObj.label || ''}" style="flex:1;" oninput="updateOrderOption(${idx}, 'label', this.value)">
+                    <input type="text" placeholder="Value" value="${optObj.value || ''}" style="flex:1;" oninput="updateOrderOption(${idx}, 'value', this.value)">
+                    <button type="button" class="icon-btn danger-btn" onclick="removeOrderOptionInput(${idx})">✕</button>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function updateOrderOption(idx, key, val) {
+            if (typeof activeOrderItemDraft.options[idx] === 'string') {
+                activeOrderItemDraft.options[idx] = { label: activeOrderItemDraft.options[idx], value: activeOrderItemDraft.options[idx] };
+            }
+            activeOrderItemDraft.options[idx][key] = val;
+            markOrderItemDirty();
+        }
+
+        function addOrderOptionInput() {
+            if (!activeOrderItemDraft.options) activeOrderItemDraft.options = [];
+            activeOrderItemDraft.options.push({ label: `Option ${activeOrderItemDraft.options.length + 1}`, value: `option_${activeOrderItemDraft.options.length + 1}` });
+            renderOrderOptionsInputs();
+            markOrderItemDirty();
+        }
+
+        function removeOrderOptionInput(idx) {
+            activeOrderItemDraft.options.splice(idx, 1);
+            renderOrderOptionsInputs();
+            markOrderItemDirty();
+        }
+
+        function markOrderItemDirty() {
+            isOrderItemDirty = true;
+            updateOrderItemUnsavedBar();
+        }
+
+        function updateOrderItemUnsavedBar() {
+            const bar = document.getElementById('orderItemUnsavedBar');
+            const card = document.getElementById('orderItemEditCard');
+            if (isOrderItemDirty) {
+                bar.style.display = 'flex';
+                card.classList.add('has-unsaved-bar');
+            } else {
+                bar.style.display = 'none';
+                card.classList.remove('has-unsaved-bar');
+            }
+        }
+
+        function tryCloseOrderItemModal() {
+            if (isOrderItemDirty) {
+                alert('You have unsaved changes. Please choose Save or Discard below.');
+                return;
+            }
+            document.getElementById('orderItemEditModal').classList.remove('active');
+        }
+
+        function saveOrderItemChanges() {
+            activeOrderItemDraft.label = document.getElementById('editOrderFieldLabel').value;
+            activeOrderItemDraft.name = document.getElementById('editOrderFieldName').value;
+            activeOrderItemDraft.placeholder = document.getElementById('editOrderFieldPlaceholder').value;
+            activeOrderItemDraft.required = document.getElementById('editOrderFieldRequired').checked;
+
+            activeOrderMainDraft.fields[editingOrderIndex] = JSON.parse(JSON.stringify(activeOrderItemDraft));
+            markOrderMainDirty();
+            renderOrderReorderList();
+
+            isOrderItemDirty = false;
+            updateOrderItemUnsavedBar();
+            document.getElementById('orderItemEditModal').classList.remove('active');
+        }
+
+        function discardOrderItemChanges() {
+            isOrderItemDirty = false;
+            updateOrderItemUnsavedBar();
+            document.getElementById('orderItemEditModal').classList.remove('active');
         }
     </script>
 
