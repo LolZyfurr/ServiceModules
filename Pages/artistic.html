@@ -279,32 +279,10 @@
 
                 <div class="profile-details">
                     <div class="profile-padding">
-                        <div class="profile-header">
-                            <h2 class="profile-name">Artist Studio</h2>
-                            <span class="role-badge" title="Founder">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M2 19h20v2H2v-2zm1.15-12.8L8 10.5 12 4l4 6.5 4.85-4.3 1.15 11.8H2l1.15-11.8z" />
-                                </svg>
-                            </span>
-                        </div>
-                        <div class="profile-info">
-                            <span class="profile-username">@artist_handle</span>
-                            <span class="profile-pronouns">He/Him</span>
-                        </div>
+
                     </div>
                     <div class="profile-status-list">
-                        <div class="profile-status open">
-                            <span class="profile-status-dot"></span>
-                            <span>Commissions [3/5]</span>
-                        </div>
-                        <div class="profile-status selective">
-                            <span class="profile-status-dot"></span>
-                            <span>Art Trades [Selective]</span>
-                        </div>
-                        <div class="profile-status closed">
-                            <span class="profile-status-dot"></span>
-                            <span>Requests [Closed]</span>
-                        </div>
+
                     </div>
                     <p class="profile-bio">
                         Digital Illustrator & Concept Artist. Commissions are currently OPEN! Check options & queue below.
@@ -465,22 +443,26 @@
         import newProfileCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileCard.js?t=1';
         import newKanbanColumn from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/kanbanColumn.js?t=2';
         import newFormCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/formCard.js?t=1';
+        import newProfileInfo from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileInfo.js?t=2';
+        import newStatusList from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/statusList.js?t=2';
+        import newProfileBio from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileBio.js?t=2';
 
         const exampleResponse = {
             user: {
                 id: 1,
                 handle: "artist_handle",
                 name: "Artist Studio",
+                type: "member",
+                pronouns: "He/Him",
                 profile: {
                     avatar: "https://picsum.photos/200/200?random=1",
                     banner: "https://picsum.photos/800/200?random=2",
                     bio: "Digital Illustrator & Concept Artist. Commissions are currently OPEN! Check options & queue below.",
-                    pronouns: "He/Him",
                     status: {
                         commissions: {
                             type: "open",
                             slots: {
-                                taken: 3,
+                                taken: 2,
                                 total: 5
                             }
                         },
@@ -492,8 +474,7 @@
                             type: "closed",
                             slots: null
                         },
-                    },
-                    type: "founder"
+                    }
                 },
                 channels: {
                     Pricing: [{
@@ -738,6 +719,47 @@
             profile.parent('#profile-container');
         };
 
+        window.renderProfileInfo = function() {
+            const target = document.querySelector('.profile-padding');
+            const userData = window.userData || exampleResponse.user;
+            const profileInfo = newProfileInfo({
+                handle: userData.handle,
+                name: userData.name,
+                type: userData.type,
+                pronouns: userData.pronouns
+            });
+            if (target) {
+                profileInfo.replace(target);
+            } else {
+                profileInfo.parent('.profile-details');
+            }
+        };
+
+        window.renderStatusList = function() {
+            const target = document.querySelector('.profile-status-list');
+            const statusData = window.statusData || exampleResponse.user.profile.status;
+            const statusList = newStatusList(statusData);
+            if (target) {
+                statusList.replace(target);
+            } else {
+                statusList.parent('.profile-details');
+            }
+            //profile-status-list
+        };
+
+        window.renderProfileBio = function() {
+            const target = document.querySelector('.profile-bio');
+            const profileData = window.profileData || exampleResponse.user.profile;
+            const profileBio = newProfileBio({
+                bio: profileData.bio
+            });
+            if (target) {
+                profileBio.replace(target);
+            } else {
+                profileBio.parent('.profile-details');
+            }
+        };
+
         window.renderPricingGrid = function() {
             const container = document.getElementById('pricing-container');
             if (!container) return;
@@ -781,12 +803,17 @@
             });
         };
 
+        window.userData = exampleResponse.user;
         window.profileData = exampleResponse.user.profile;
+        window.statusData = exampleResponse.user.profile.status;
         window.pricingData = exampleResponse.user.channels.Pricing;
         window.progressData = exampleResponse.user.channels.Progress;
         window.orderData = exampleResponse.user.channels.Order;
 
         window.renderProfileCard();
+        window.renderProfileInfo();
+        window.renderStatusList();
+        window.renderProfileBio();
         window.renderPricingGrid();
         window.renderProgressGrid();
         window.renderFormCard();
