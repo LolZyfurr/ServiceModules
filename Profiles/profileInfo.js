@@ -6,11 +6,9 @@ export default function newProfileInfo({
 } = {}) {
     const data = { handle, name, type, pronouns };
 
-    // Create the outer element
     const element = document.createElement("div");
     element.className = "profile-padding";
 
-    // Header section
     const header = document.createElement("div");
     header.className = "profile-header";
 
@@ -18,17 +16,24 @@ export default function newProfileInfo({
     nameEl.className = "profile-name";
     nameEl.textContent = name;
 
+    const icons = {
+        founder: '<path d="M2 19h20v2H2v-2zm1.15-12.8L8 10.5 12 4l4 6.5 4.85-4.3 1.15 11.8H2l1.15-11.8z" />',
+        staff: '<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />',
+        member: '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />'
+    };
+
+    const iconPath = icons[type.toLowerCase()] || icons.member;
+
     const badge = document.createElement("span");
     badge.className = "role-badge";
     badge.title = type.charAt(0).toUpperCase() + type.slice(1);
     badge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M2 19h20v2H2v-2zm1.15-12.8L8 10.5 12 4l4 6.5 4.85-4.3 1.15 11.8H2l1.15-11.8z" />
+        ${iconPath}
     </svg>`;
 
     header.appendChild(nameEl);
     header.appendChild(badge);
 
-    // Info section
     const info = document.createElement("div");
     info.className = "profile-info";
 
@@ -43,11 +48,9 @@ export default function newProfileInfo({
     info.appendChild(username);
     info.appendChild(pronounsEl);
 
-    // Assemble outer element
     element.appendChild(header);
     element.appendChild(info);
 
-    // Helper functions
     const parent = (target) => {
         const parentEl = typeof target === "string" ? document.querySelector(target) : target;
         if (parentEl) {
