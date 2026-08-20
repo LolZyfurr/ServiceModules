@@ -285,7 +285,7 @@
 
                     </div>
                     <p class="profile-bio">
-                        Digital Illustrator & Concept Artist. Commissions are currently OPEN! Check options & queue below.
+
                     </p>
                 </div>
 
@@ -375,13 +375,8 @@
                             <h2>Art Gallery</h2>
                             <p>A showcase of recent artwork and personal art projects.</p>
                         </div>
-                        <div class="gallery-grid">
-                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=1" alt="Artwork 1"></div>
-                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=2" alt="Artwork 2"></div>
-                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=3" alt="Artwork 3"></div>
-                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=4" alt="Artwork 4"></div>
-                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=5" alt="Artwork 5"></div>
-                            <div class="gallery-item"><img src="https://picsum.photos/400/400?random=6" alt="Artwork 6"></div>
+                        <div class="gallery-grid" id="gallery-container">
+
                         </div>
                     </div>
 
@@ -419,11 +414,7 @@
                             <h2>Terms of Service</h2>
                             <p>Please review my policies regarding payments, revisions, and usage rights.</p>
                         </div>
-                        <div class="card" style="display: flex; flex-direction: column; gap: 12px; line-height: 1.6; color: rgba(255, 255, 255, 0.85);">
-                            <p><strong>1. Payment:</strong> A 50% upfront deposit is required once the initial rough sketch is approved. Remaining balance is due prior to full-resolution file delivery.</p>
-                            <p><strong>2. Revisions:</strong> Minor changes can be requested during the sketch phase. Major redraws after sketch approval may incur additional fees.</p>
-                            <p><strong>3. Usage & Rights:</strong> Artwork is strictly for personal, non-commercial use unless explicit commercial licensing rights are purchased separately.</p>
-                            <p><strong>4. Refunds:</strong> Deposits are non-refundable once the final drawing/coloring phase has commenced.</p>
+                        <div class="card" style="display: flex; flex-direction: column; gap: 12px; line-height: 1.6; color: rgba(255, 255, 255, 0.85);" id="terms-container">
                         </div>
                     </div>
 
@@ -432,6 +423,10 @@
                 <!-- Copyright Footer -->
                 <footer class="site-footer" style="padding: 20px 0; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 24px;">
                     <p>&copy; 2026 Artist Studio by @LolZyfurr. All rights reserved.</p>
+                    <p style="margin-top: 8px;">
+                        <a href="/privacy.html" style="color: rgba(255, 255, 255, 0.6); text-decoration: underline; margin-right: 12px;">Privacy Policy</a>
+                        <a href="/terms.html" style="color: rgba(255, 255, 255, 0.6); text-decoration: underline;">Terms of Service</a>
+                    </p>
                 </footer>
 
             </div>
@@ -446,13 +441,15 @@
         import newProfileInfo from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileInfo.js?t=2';
         import newStatusList from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/statusList.js?t=2';
         import newProfileBio from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileBio.js?t=2';
+        import newGallery from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/gallery.js?t=2';
+        import newTerms from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/terms.js?t=2';
 
         const exampleResponse = {
             user: {
                 id: 1,
                 handle: "artist_handle",
                 name: "Artist Studio",
-                type: "member",
+                type: "founder",
                 pronouns: "He/Him",
                 profile: {
                     avatar: "https://picsum.photos/200/200?random=1",
@@ -695,7 +692,20 @@
                                 placeholder: "Any additional details, moodboards, color palettes, or instructions..."
                             }
                         ]
-                    }]
+                    }],
+                    Gallery: [
+                        "https://picsum.photos/400/400?random=1",
+                        "https://picsum.photos/400/400?random=2"
+                    ],
+                    Terms: [{
+                            title: "Payment",
+                            content: "Payment is required upfront before any work begins. Accepted payment methods include PayPal, Venmo, and Cash App. Please ensure that you have the necessary funds available before placing an order."
+                        },
+                        {
+                            title: "Revisions",
+                            content: "I offer up to 2 rounds of revisions for each commission. Additional revisions may incur extra fees. Please provide clear and specific feedback to ensure that the final artwork meets your expectations."
+                        }
+                    ]
                 },
             }
         };
@@ -803,12 +813,34 @@
             });
         };
 
+        window.renderGalleryGrid = function() {
+            const container = document.getElementById('gallery-container');
+            if (!container) return;
+            const images = window.galleryData || exampleResponse.user.channels.Gallery;
+            const gallery = newGallery({
+                images
+            });
+            gallery.replace(container);
+        };
+
+        window.renderTermsGrid = function() {
+            const container = document.getElementById('terms-container');
+            if (!container) return;
+            const termsList = window.termsData || exampleResponse.user.channels.Terms;
+            const terms = newTerms({
+                terms: termsList
+            });
+            terms.replace(container);
+        };
+
         window.userData = exampleResponse.user;
         window.profileData = exampleResponse.user.profile;
         window.statusData = exampleResponse.user.profile.status;
         window.pricingData = exampleResponse.user.channels.Pricing;
         window.progressData = exampleResponse.user.channels.Progress;
         window.orderData = exampleResponse.user.channels.Order;
+        window.galleryData = exampleResponse.user.channels.Gallery;
+        window.termsData = exampleResponse.user.channels.Terms;
 
         window.renderProfileCard();
         window.renderProfileInfo();
@@ -817,6 +849,8 @@
         window.renderPricingGrid();
         window.renderProgressGrid();
         window.renderFormCard();
+        window.renderGalleryGrid();
+        window.renderTermsGrid();
     </script>
 
     <script src="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/orderModal.js?t=1"></script>
