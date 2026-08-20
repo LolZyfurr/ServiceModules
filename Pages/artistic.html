@@ -16,11 +16,8 @@
                 <h3>Terms of Service Agreement</h3>
                 <p class="subtitle">Please review and confirm before submitting your commission request.</p>
 
-                <div class="modal-tos-box">
-                    <p><strong>1. Payment:</strong> 50% deposit required after sketch approval. Final delivery upon full payment.</p>
-                    <p style="margin-top: 6px;"><strong>2. Revisions:</strong> 3 minor revisions included during sketch phase.</p>
-                    <p style="margin-top: 6px;"><strong>3. Usage:</strong> Personal non-commercial use only unless commercial rights are purchased.</p>
-                    <p style="margin-top: 6px;"><strong>4. Refunds:</strong> Non-refundable once drawing phase begins.</p>
+                <div class="modal-tos-box" id="terms-modal">
+
                 </div>
 
                 <label class="checkbox-group">
@@ -831,6 +828,14 @@
                 terms: termsList
             });
             terms.replace(container);
+
+            const container01 = document.getElementById('terms-modal');
+            if (!container01) return;
+            const termsList01 = window.termsData || exampleResponse.user.channels.Terms;
+            const terms01 = newTerms({
+                terms: termsList
+            });
+            terms01.replace(container01);
         };
 
         window.userData = exampleResponse.user;
