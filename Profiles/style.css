@@ -901,3 +901,13 @@ body {
     justify-content: center;
     color: #f59e0b;
 }
+
+input[type="checkbox"]:checked {
+    background-color: rgb(96, 165, 250);
+    background-image: url('data:image/svg+xml;utf8,<svg ... />');
+}
+
+input[type="radio"]:checked {
+    background-color: rgb(96, 165, 250);
+    background-image: url('data:image/svg+xml;utf8,<svg ... />');
+}
