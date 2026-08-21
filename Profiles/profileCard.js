@@ -86,7 +86,11 @@ export default function newProfileCard(data = {}) {
     editBtn.id = "editBannerBtn";
     editBtn.className = "banner-btn";
     editBtn.style.display = "none";
-    editBtn.onclick = () => alert("Edit options opened");
+    editBtn.onclick = () => {
+        if (typeof openEditProfileModal === "function") {
+            openEditProfileModal();
+        }
+    };
 
     const editSvg = document.createElementNS(SVG_NS, "svg");
     editSvg.setAttribute("width", "16");
