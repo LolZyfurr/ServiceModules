@@ -34,33 +34,6 @@
             </div>
         </div>
 
-        <!-- Login Modal -->
-        <div id="loginModal" class="modal-overlay">
-            <div class="modal-card">
-                <h3>Account Login</h3>
-                <p class="subtitle">Enter your details or register using an invitation code.</p>
-
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="loginEmail" placeholder="name@example.com">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••">
-                </div>
-                <div class="form-group">
-                    <label>Invite Code (Required if creating a new account)</label>
-                    <input type="text" id="loginInviteCode" placeholder="Enter special code">
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn-secondary" onclick="closeLoginModal()">Cancel</button>
-                    <button type="button" class="submit-btn" style="width: auto; padding: 10px 20px;"
-                        onclick="handleLogin()">Login / Register</button>
-                </div>
-            </div>
-        </div>
-
         <!-- Edit Profile Modal -->
         <div id="editProfileModal" class="modal-overlay">
             <div class="modal-card" id="editProfileCard">
@@ -834,7 +807,63 @@
 
     <script>
         let isLoggedIn = false;
+        let isOwner = false;
         let isProfileDirty = false;
+        const API_BASE = "https://studio.lolzyfurr.workers.dev";
+
+        async function checkAuthState(profileUserId) {
+            const token = localStorage.getItem("authToken");
+            isLoggedIn = !!token; // Toggled based on token existence
+
+            if (!token) return false;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    localStorage.removeItem("authToken");
+                    isLoggedIn = false;
+                    return false;
+                }
+
+                const selfData = await response.json();
+
+                // If current profile page matches self user id, set isOwner to true
+                if (selfData.id && selfData.id === profileUserId) {
+                    isOwner = true;
+                    showOwnerUI();
+                }
+
+                return true;
+            } catch (err) {
+                console.error("Auth check failed:", err);
+                isLoggedIn = false;
+                return false;
+            }
+        }
+
+        function showOwnerUI() {
+            const loginBtn = document.getElementById('loginBannerBtn');
+            const editBtn = document.getElementById('editBannerBtn');
+            const settingsBtn = document.getElementById('settingsBannerBtn');
+            const editPricingBtn = document.getElementById('editPricingSectionBtn');
+            const editOrderBtn = document.getElementById('editOrderSectionBtn');
+
+            if (loginBtn) loginBtn.style.display = 'none';
+            if (editBtn) editBtn.style.display = 'flex';
+            if (settingsBtn) settingsBtn.style.display = 'flex';
+            if (editPricingBtn) editPricingBtn.style.display = 'inline-flex';
+            if (editOrderBtn) editOrderBtn.style.display = 'inline-flex';
+        }
+
+        function openLoginModal() {
+            window.location.href = "https://lolzyfurr.github.io/ArtistStudio/login";
+        }
 
         function markProfileDirty() {
             isProfileDirty = true;
@@ -909,14 +938,6 @@
             switchView('messages');
         }
 
-        function openLoginModal() {
-            document.getElementById('loginModal').classList.add('active');
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').classList.remove('active');
-        }
-
         function openEditProfileModal() {
             const modal = document.getElementById('editProfileModal');
             if (!modal) return;
@@ -975,7 +996,7 @@
             if (modal) modal.classList.remove('active');
         }
 
-        function saveProfileChanges() {
+        async function saveProfileChanges() {
             if (!window.userData) window.userData = {};
             if (!window.profileData) window.profileData = {};
 
@@ -1030,6 +1051,30 @@
                 } : null
             };
 
+            const token = localStorage.getItem("authToken");
+            if (token && window.userData.id) {
+                try {
+                    await fetch(`${API_BASE}/users/${window.userData.id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            name: window.userData.name,
+                            handle: window.userData.handle,
+                            pronouns: window.userData.pronouns,
+                            profile: {
+                                bio: window.profileData.bio,
+                                status: window.statusData
+                            }
+                        })
+                    });
+                } catch (err) {
+                    console.error("Failed to sync profile update to server:", err);
+                }
+            }
+
             if (typeof window.renderProfileCard === 'function') window.renderProfileCard();
             if (typeof window.renderProfileInfo === 'function') window.renderProfileInfo();
             if (typeof window.renderStatusList === 'function') window.renderStatusList();
@@ -1041,24 +1086,6 @@
 
         function saveProfile() {
             saveProfileChanges();
-        }
-
-        function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const inviteCode = document.getElementById('loginInviteCode').value;
-            if (!email || !password) {
-                alert('Please fill out your email and password.');
-                return;
-            }
-            isLoggedIn = true;
-            document.getElementById('loginBannerBtn').style.display = 'none';
-            document.getElementById('editBannerBtn').style.display = 'flex';
-            document.getElementById('settingsBannerBtn').style.display = 'flex';
-            document.getElementById('editPricingSectionBtn').style.display = 'inline-flex';
-            const editOrderBtn = document.getElementById('editOrderSectionBtn');
-            if (editOrderBtn) editOrderBtn.style.display = 'inline-flex';
-            closeLoginModal();
         }
 
         function selectPricingOption(type) {
