@@ -1,1 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Studio</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=2">
+</head>
+
+<body>
+
+    <div class="listChannels__1" id="appRoot" data-active-view="channels">
+        <div id="tosModal" class="modal-overlay">
+            <div class="modal-card">
+                <h3>Terms of Service Agreement</h3>
+                <p class="subtitle">Please review and confirm before submitting your commission request.</p>
+
+                <div class="modal-tos-box" id="terms-modal">
+
+                </div>
+
+                <label class="checkbox-group">
+                    <input type="checkbox" id="tosCheck" onchange="toggleSubmitBtn()">
+                    <span>I have read, understood, and agree to the Terms of Service.</span>
+                </label>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeTosModal()">Cancel</button>
+                    <button type="button" id="confirmSubmitBtn" class="submit-btn"
+                        style="width: auto; padding: 10px 20px;" disabled onclick="confirmOrder()">Confirm &
+                        Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal-overlay">
+            <div class="modal-card">
+                <h3>Account Login</h3>
+                <p class="subtitle">Enter your details or register using an invitation code.</p>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>Invite Code (Required if creating a new account)</label>
+                    <input type="text" id="loginInviteCode" placeholder="Enter special code">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeLoginModal()">Cancel</button>
+                    <button type="button" class="submit-btn" style="width: auto; padding: 10px 20px;"
+                        onclick="handleLogin()">Login / Register</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div id="editProfileModal" class="modal-overlay">
+            <div class="modal-card" id="editProfileCard">
+                <h3>Edit Profile</h3>
+                <p class="subtitle">Update your profile visuals, identity details, and active status indicators.</p>
+
+                <div class="form-group">
+                    <label>Banner Image</label>
+                    <input type="file" id="editProfileBannerUpload" accept="image/*" onchange="markProfileDirty()">
+                    <div id="profileBannerPreviewContainer" style="margin-top: 8px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Profile Picture</label>
+                    <input type="file" id="editProfileAvatarUpload" accept="image/*" onchange="markProfileDirty()">
+                    <div id="profileAvatarPreviewContainer" style="margin-top: 8px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input type="text" id="editProfileDisplayName" placeholder="Display Name"
+                        oninput="markProfileDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Handle / Username</label>
+                    <input type="text" id="editProfileUsername" placeholder="username" oninput="markProfileDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Pronouns</label>
+                    <input type="text" id="editProfilePronouns" placeholder="e.g. They/Them, She/Her"
+                        oninput="markProfileDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="editProfileBio" rows="3" placeholder="Tell visitors about yourself..."
+                        oninput="markProfileDirty()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Art Trades Status</label>
+                    <select id="editStatusTrades" onchange="markProfileDirty()">
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                        <option value="hold">On Hold</option>
+                        <option value="selective">Selective</option>
+                    </select>
+                    <div style="margin-top: 8px;">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="editProfileUseTradesSlots"
+                                onchange="toggleTradesSlotsInput(); markProfileDirty();">
+                            <span>Limit Art Trades Slots</span>
+                        </label>
+                    </div>
+                    <div id="tradesSlotsContainer" style="display: none; margin-top: 8px;">
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Current Trades</label>
+                                <input type="number" id="editSlotsTradesCurrent" min="0" placeholder="e.g. 1"
+                                    oninput="markProfileDirty()">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Max Trades</label>
+                                <input type="number" id="editSlotsTradesMax" min="0" placeholder="e.g. 3"
+                                    oninput="markProfileDirty()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Commissions Status</label>
+                    <select id="editStatusCommissions" onchange="markProfileDirty()">
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                        <option value="hold">On Hold</option>
+                        <option value="selective">Selective</option>
+                    </select>
+                    <div style="margin-top: 8px;">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="editProfileUseCommissionsSlots"
+                                onchange="toggleCommissionsSlotsInput(); markProfileDirty();">
+                            <span>Limit Commission Slots</span>
+                        </label>
+                    </div>
+                    <div id="commissionsSlotsContainer" style="display: none; margin-top: 8px;">
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Current Commissions</label>
+                                <input type="number" id="editSlotsCommissionsCurrent" min="0" placeholder="e.g. 2"
+                                    oninput="markProfileDirty()">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Max Commissions</label>
+                                <input type="number" id="editSlotsCommissionsMax" min="0" placeholder="e.g. 5"
+                                    oninput="markProfileDirty()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Requests Status</label>
+                    <select id="editStatusRequests" onchange="markProfileDirty()">
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                        <option value="hold">On Hold</option>
+                        <option value="selective">Selective</option>
+                    </select>
+                    <div style="margin-top: 8px;">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="editProfileUseRequestsSlots"
+                                onchange="toggleRequestsSlotsInput(); markProfileDirty();">
+                            <span>Limit Requests Slots</span>
+                        </label>
+                    </div>
+                    <div id="requestsSlotsContainer" style="display: none; margin-top: 8px;">
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Current Requests</label>
+                                <input type="number" id="editSlotsRequestsCurrent" min="0" placeholder="e.g. 0"
+                                    oninput="markProfileDirty()">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Max Requests</label>
+                                <input type="number" id="editSlotsRequestsMax" min="0" placeholder="e.g. 2"
+                                    oninput="markProfileDirty()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions"
+                    style="margin-top: 15px; display: flex; justify-content: flex-end; gap: 8px;">
+                    <button type="button" class="btn-secondary" onclick="tryCloseProfileModal()">Close</button>
+                    <button type="button" class="submit-btn" style="width: auto; padding: 10px 20px;"
+                        onclick="saveProfileChanges()">Save & Close</button>
+                </div>
+
+                <div id="profileUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="discardProfileChanges()">Discard</button>
+                        <button type="button" class="submit-btn"
+                            style="width: auto; padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="saveProfileChanges()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Main Edit Modal -->
+        <div id="pricingMainEditModal" class="modal-overlay">
+            <div class="modal-card" id="pricingMainEditCard">
+                <h3>Edit Pricing Section</h3>
+                <p class="subtitle">Update channel description and manage options layout.</p>
+
+                <div class="form-group">
+                    <label>Section Description</label>
+                    <textarea id="editPricingDescription" rows="2" oninput="markPricingMainDirty()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="margin-bottom: 0;">Reorder & Edit Items</label>
+                        <!-- Add New Item Button -->
+                        <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;"
+                            onclick="addPricingItem()">+ Add Item</button>
+                    </div>
+
+                    <div id="pricingReorderList">
+
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="tryClosePricingMainModal()">Close</button>
+                </div>
+
+                <!-- Unsaved Bar -->
+                <div id="pricingMainUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="discardPricingMainChanges()">Discard</button>
+                        <button type="button" class="submit-btn"
+                            style="width: auto; padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="savePricingMainChanges()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Pricing Item Edit Modal -->
+        <div id="pricingItemEditModal" class="modal-overlay">
+            <div class="modal-card" id="pricingItemEditCard">
+                <h3 id="itemEditModalTitle">Edit Option</h3>
+                <p class="subtitle">Modify pricing rates, features, and example images.</p>
+
+                <div class="form-group">
+                    <label>Option Title</label>
+                    <input type="text" id="editItemTitle" oninput="markPricingItemDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Price Display</label>
+                    <input type="text" id="editItemPrice" placeholder="e.g. $15" oninput="markPricingItemDirty()">
+                </div>
+
+                <div class="form-group">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="margin:0;">Features (Max 200 chars each)</label>
+                        <button type="button" class="icon-btn" onclick="addFeatureInput()" title="Add Feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="editItemFeaturesContainer">
+                        <!-- Dynamic Inputs -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Examples</label>
+                    <input type="file" id="editItemImageUpload" accept="image/*" multiple
+                        onchange="handleImageUpload(event)">
+                    <div class="image-preview-grid" id="editItemImagePreviews">
+                        <!-- Image Previews -->
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="tryClosePricingItemModal()">Back</button>
+                </div>
+
+                <!-- Unsaved Bar -->
+                <div id="pricingItemUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="discardPricingItemChanges()">Discard</button>
+                        <button type="button" class="submit-btn"
+                            style="width: auto; padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="savePricingItemChanges()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Form Main Edit Modal -->
+        <div id="orderMainEditModal" class="modal-overlay">
+            <div class="modal-card" id="orderMainEditCard">
+                <h3>Edit Order Form Section</h3>
+                <p class="subtitle">Update channel description and manage order form layout.</p>
+
+                <div class="form-group">
+                    <label>Section Description</label>
+                    <textarea id="editOrderDescription" rows="2" oninput="markOrderMainDirty()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="margin-bottom: 0;">Reorder & Edit Fields</label>
+                        <!-- Add New Field Button -->
+                        <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;"
+                            onclick="addOrderItem()">+ Add Field</button>
+                    </div>
+
+                    <div id="orderReorderList">
+
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="tryCloseOrderMainModal()">Close</button>
+                </div>
+
+                <!-- Unsaved Bar -->
+                <div id="orderMainUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="discardOrderMainChanges()">Discard</button>
+                        <button type="button" class="submit-btn"
+                            style="width: auto; padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="saveOrderMainChanges()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Question Type Selection Modal -->
+        <div id="orderTypeModal" class="modal-overlay">
+            <div class="modal-card">
+                <h3>Select Question Type</h3>
+                <p class="subtitle">Choose the type of field you want to add to your order form.</p>
+
+                <div class="form-group">
+                    <label>Field Type</label>
+                    <select id="newFieldTypeSelect">
+                        <option value="text">Short Text Input</option>
+                        <option value="textarea">Long Text Area</option>
+                        <option value="select">Dropdown Select</option>
+                        <option value="radio">Radio Buttons (Single Choice)</option>
+                        <option value="checkbox">Checkboxes (Multiple Choice)</option>
+                        <option value="file">File Upload</option>
+                        <option value="date">Date Picker</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="closeOrderTypeModal()">Cancel</button>
+                    <button type="button" class="submit-btn" style="width: auto; padding: 8px 16px;"
+                        onclick="confirmAddOrderItem()">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Order Item / Field Edit Modal -->
+        <div id="orderItemEditModal" class="modal-overlay">
+            <div class="modal-card" id="orderItemEditCard">
+                <h3 id="orderItemEditTitle">Edit Form Question</h3>
+                <p class="subtitle">Modify label, field name, placeholders, and choices.</p>
+
+                <div class="form-group">
+                    <label>Field Label / Question Title</label>
+                    <input type="text" id="editOrderFieldLabel" oninput="markOrderItemDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Internal Field Name (ID/Key)</label>
+                    <input type="text" id="editOrderFieldName" oninput="markOrderItemDirty()">
+                </div>
+
+                <div class="form-group" id="orderPlaceholderGroup">
+                    <label>Placeholder Text</label>
+                    <input type="text" id="editOrderFieldPlaceholder" oninput="markOrderItemDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="editOrderFieldRequired" onchange="markOrderItemDirty()">
+                        <span>Required Field</span>
+                    </label>
+                </div>
+
+                <!-- Dynamic Options container for select, radio, checkbox -->
+                <div class="form-group" id="orderOptionsGroup" style="display: none;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="margin:0;">Options / Choices</label>
+                        <button type="button" class="icon-btn" onclick="addOrderOptionInput()"
+                            title="Add Option">+</button>
+                    </div>
+                    <div id="editOrderOptionsContainer"></div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary" onclick="tryCloseOrderItemModal()">Back</button>
+                </div>
+
+                <!-- Unsaved Bar -->
+                <div id="orderItemUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="discardOrderItemChanges()">Discard</button>
+                        <button type="button" class="submit-btn"
+                            style="width: auto; padding: 6px 12px; font-size: 0.8rem;"
+                            onclick="saveOrderItemChanges()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Channels Container -->
+        <div class="containerChannels__1">
+            <div class="containerProfile__1">
+
+                <div class="profile-card" id="profile-container">
+
+                </div>
+
+                <div class="profile-details">
+                    <div class="profile-padding">
+
+                    </div>
+                    <div class="profile-status-list">
+
+                    </div>
+                    <p class="profile-bio">
+
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="channelList__1">
+                <div class="channelButton__0 active" id="btn-pricing" role="button"
+                    onclick="showTab('pricing', 'Pricing & Info')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                    </svg>
+                    <span>Pricing</span>
+                </div>
+
+                <div class="channelButton__0" id="btn-gallery" role="button"
+                    onclick="showTab('gallery', 'Art Gallery')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                    <span>Gallery</span>
+                </div>
+
+                <div class="channelButton__0" id="btn-progress" role="button"
+                    onclick="showTab('progress', 'Work Progress')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <path d="M8 7v10" />
+                        <path d="M12 7v6" />
+                        <path d="M16 7v8" />
+                    </svg>
+                    <span>Progress Board</span>
+                </div>
+
+                <div class="channelButton__0" id="btn-order" role="button" onclick="showTab('order', 'Order Form')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                    <span>Order Form</span>
+                </div>
+
+                <div class="channelButton__0" id="btn-tos" role="button" onclick="showTab('tos', 'Terms of Service')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>Terms of Service</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages / Dynamic Content Area -->
+        <div class="listMessages__1">
+            <div class="containerMessages__1">
+                <div class="mobile-header">
+                    <button class="btn-nav" onclick="switchView('channels')">← Menu</button>
+                    <h3 id="mobileHeaderTitle">Pricing & Info</h3>
+                </div>
+
+                <div class="content-body">
+
+                    <!-- 1. PRICING PANEL -->
+                    <div id="pricing" class="view-panel active">
+                        <div class="panel-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h2>Commission Pricing</h2>
+                                <p id="pricingHeaderDesc">Base rates for standard art commissions. Click a card to start
+                                    an order.</p>
+                            </div>
+                            <button id="editPricingSectionBtn" class="header-edit-btn" style="display: none;"
+                                onclick="openPricingMainModal()" title="Edit Pricing Section">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 20h9" />
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="pricing-grid" id="pricing-container">
+
+                        </div>
+                    </div>
+
+                    <!-- 2. GALLERY PANEL -->
+                    <div id="gallery" class="view-panel">
+                        <div class="panel-header">
+                            <h2>Art Gallery</h2>
+                            <p>A showcase of recent artwork and personal art projects.</p>
+                        </div>
+                        <div class="gallery-grid" id="gallery-container">
+
+                        </div>
+                    </div>
+
+                    <!-- 3. PROGRESS TRELLO BOARD -->
+                    <div id="progress" class="view-panel">
+                        <div class="panel-header">
+                            <h2>Live Commission Queue</h2>
+                            <p>Track current project statuses in real-time.</p>
+                        </div>
+                        <div class="kanban-board" id="progress-container">
+
+                        </div>
+                    </div>
+
+                    <!-- 4. ORDER FORM PANEL -->
+                    <div id="order" class="view-panel">
+                        <div class="panel-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h2>Commission Order Form</h2>
+                                <p id="orderHeaderDesc">Submit your project details to request a commission slot.</p>
+                            </div>
+                            <button id="editOrderSectionBtn" class="header-edit-btn" style="display: none;"
+                                onclick="openOrderMainModal()" title="Edit Order Form Section">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 20h9" />
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="order-container"></div>
+                    </div>
+
+                    <!-- 5. TERMS OF SERVICE PANEL -->
+                    <div id="tos" class="view-panel">
+                        <div class="panel-header">
+                            <h2>Terms of Service</h2>
+                            <p>Please review my policies regarding payments, revisions, and usage rights.</p>
+                        </div>
+                        <div class="card"
+                            style="display: flex; flex-direction: column; gap: 12px; line-height: 1.6; color: rgba(255, 255, 255, 0.85);"
+                            id="terms-container">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Copyright Footer -->
+                <footer class="site-footer"
+                    style="padding: 20px 0; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 24px;">
+                    <p>&copy; 2026 Artist Studio by @LolZyfurr. All rights reserved.</p>
+                    <p style="margin-top: 8px;">
+                        <a href="/privacy.html"
+                            style="color: rgba(255, 255, 255, 0.6); text-decoration: underline; margin-right: 12px;">Privacy
+                            Policy</a>
+                        <a href="/terms.html" style="color: rgba(255, 255, 255, 0.6); text-decoration: underline;">Terms
+                            of Service</a>
+                    </p>
+                </footer>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="module">
+        import newPricingCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/pricingCard.js?t=2';
+        import newProfileCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileCard.js?t=2';
+        import newKanbanColumn from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/kanbanColumn.js?t=2';
+        import newFormCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/formCard.js?t=4';
+        import newProfileInfo from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileInfo.js?t=2';
+        import newStatusList from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/statusList.js?t=2';
+        import newProfileBio from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileBio.js?t=2';
+        import newGallery from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/gallery.js?t=2';
+        import newTerms from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/terms.js?t=2';
+
+        window.selectPricingOption = (title) => {
+            alert(`Selected option: ${title}`);
+        };
+
+        window.renderProfileCard = function () {
+            const container = document.getElementById('profile-container');
+            if (!container) return;
+            container.innerHTML = '';
+            const profileData = window.profileData || exampleResponse.user.profile;
+            if (profileData?.banner) {
+                document.body.style.backgroundImage = `url("${profileData.banner}")`;
+            }
+            const profile = newProfileCard({
+                avatar: profileData.avatar,
+                banner: profileData.banner
+            });
+            profile.parent('#profile-container');
+        };
+
+        window.renderProfileInfo = function () {
+            const target = document.querySelector('.profile-padding');
+            const userData = window.userData || exampleResponse.user;
+            const profileInfo = newProfileInfo({
+                handle: userData.handle,
+                name: userData.name,
+                type: userData.type,
+                pronouns: userData.pronouns
+            });
+            if (target) {
+                profileInfo.replace(target);
+            } else {
+                profileInfo.parent('.profile-details');
+            }
+        };
+
+        window.renderStatusList = function () {
+            const target = document.querySelector('.profile-status-list');
+            const statusData = window.statusData || exampleResponse.user.profile.status;
+            const statusList = newStatusList(statusData);
+            if (target) {
+                statusList.replace(target);
+            } else {
+                statusList.parent('.profile-details');
+            }
+        };
+
+        window.renderProfileBio = function () {
+            const target = document.querySelector('.profile-bio');
+            const profileData = window.profileData || exampleResponse.user.profile;
+            const profileBio = newProfileBio({
+                bio: profileData.bio
+            });
+            if (target) {
+                profileBio.replace(target);
+            } else {
+                profileBio.parent('.profile-details');
+            }
+        };
+
+        window.renderPricingGrid = function () {
+            const container = document.getElementById('pricing-container');
+            if (!container) return;
+            container.innerHTML = '';
+            (window.pricingData || exampleResponse.user.channels.Pricing).forEach(item => {
+                const card = newPricingCard({
+                    title: item.title,
+                    price: item.price,
+                    examples: item.examples,
+                    features: item.features
+                });
+                card.parent('#pricing-container');
+            });
+        };
+
+        window.renderProgressGrid = function () {
+            const container = document.getElementById('progress-container');
+            if (!container) return;
+            container.innerHTML = '';
+            (window.progressData || exampleResponse.user.channels.Progress).forEach(item => {
+                const column = newKanbanColumn({
+                    title: item.title,
+                    items: item.items
+                });
+                column.parent('#progress-container');
+            });
+        };
+
+        window.renderFormCard = function () {
+            const container = document.getElementById('order-container');
+            if (!container) return;
+            container.innerHTML = '';
+            (window.orderData || exampleResponse.user.channels.Order).forEach(item => {
+                const form = newFormCard({
+                    id: item.id,
+                    submitText: item.submitText,
+                    onSubmit: item.onSubmit,
+                    fields: item.fields
+                });
+                form.parent('#order-container');
+            });
+        };
+
+        window.renderGalleryGrid = function () {
+            const container = document.getElementById('gallery-container');
+            if (!container) return;
+            const images = window.galleryData || exampleResponse.user.channels.Gallery;
+            const gallery = newGallery({
+                images
+            });
+            gallery.replace(container);
+        };
+
+        window.renderTermsGrid = function () {
+            const container = document.getElementById('terms-container');
+            if (!container) return;
+            const termsList = window.termsData || exampleResponse.user.channels.Terms;
+            const terms = newTerms({
+                terms: termsList
+            });
+            terms.replace(container);
+
+            const container01 = document.getElementById('terms-modal');
+            if (!container01) return;
+            const termsList01 = window.termsData || exampleResponse.user.channels.Terms;
+            const terms01 = newTerms({
+                terms: termsList
+            });
+            terms01.replace(container01);
+        };
+
+        function renderAll() {
+            window.renderProfileCard();
+            window.renderProfileInfo();
+            window.renderStatusList();
+            window.renderProfileBio();
+            window.renderPricingGrid();
+            window.renderProgressGrid();
+            window.renderFormCard();
+            window.renderGalleryGrid();
+            window.renderTermsGrid();
+        }
+
+        function render404() {
+            document.body.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: #fff; font-family: sans-serif; text-align: center;">
+                    <h1 style="font-size: 4rem; margin: 0;">404</h1>
+                    <p style="font-size: 1.25rem; color: #888;">User profile not found.</p>
+                </div>
+            `;
+        }
+
+        async function initProfileRoute() {
+            const pathSegments = window.location.pathname.split('/').filter(Boolean);
+            const userId = pathSegments[pathSegments.length - 1];
+
+            if (!userId || userId.toLowerCase() === 'artiststudio') {
+                render404();
+                return;
+            }
+
+            try {
+                const response = await fetch('https://studio.lolzyfurr.workers.dev/users/1');
+                if (!response.ok) throw new Error('Profile not found');
+
+                const fetchedUser = await response.json();
+
+                window.userData = fetchedUser;
+                window.profileData = fetchedUser.profile;
+                window.statusData = fetchedUser.profile?.status;
+                window.pricingData = fetchedUser.channels?.Pricing;
+                window.progressData = fetchedUser.channels?.Progress;
+                window.orderData = fetchedUser.channels?.Order;
+                window.galleryData = fetchedUser.channels?.Gallery;
+                window.termsData = fetchedUser.channels?.Terms;
+
+                renderAll();
+            } catch (err) {
+                render404();
+            }
+        }
+
+        initProfileRoute();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/orderModal.js?t=1"></script>
+    <script src="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/pricingModal.js?t=1"></script>
+
+    <script>
+        let isLoggedIn = false;
+        let isProfileDirty = false;
+
+        function markProfileDirty() {
+            isProfileDirty = true;
+            const bar = document.getElementById('profileUnsavedBar');
+            if (bar) bar.style.display = 'flex';
+        }
+
+        function clearProfileDirty() {
+            isProfileDirty = false;
+            const bar = document.getElementById('profileUnsavedBar');
+            if (bar) bar.style.display = 'none';
+        }
+
+        function toggleTradesSlotsInput() {
+            const check = document.getElementById('editProfileUseTradesSlots');
+            const container = document.getElementById('tradesSlotsContainer');
+            if (check && container) {
+                container.style.display = check.checked ? 'block' : 'none';
+            }
+        }
+
+        function toggleCommissionsSlotsInput() {
+            const check = document.getElementById('editProfileUseCommissionsSlots');
+            const container = document.getElementById('commissionsSlotsContainer');
+            if (check && container) {
+                container.style.display = check.checked ? 'block' : 'none';
+            }
+        }
+
+        function toggleRequestsSlotsInput() {
+            const check = document.getElementById('editProfileUseRequestsSlots');
+            const container = document.getElementById('requestsSlotsContainer');
+            if (check && container) {
+                container.style.display = check.checked ? 'block' : 'none';
+            }
+        }
+
+        function tryCloseProfileModal() {
+            if (isProfileDirty) {
+                if (confirm("You have unsaved changes! Are you sure you want to exit without saving?")) {
+                    discardProfileChanges();
+                    closeEditProfileModal();
+                }
+            } else {
+                closeEditProfileModal();
+            }
+        }
+
+        function discardProfileChanges() {
+            clearProfileDirty();
+            openEditProfileModal();
+            clearProfileDirty();
+        }
+
+        function switchView(view) {
+            const root = document.getElementById('appRoot');
+            root.setAttribute('data-active-view', view);
+        }
+
+        function showTab(tabId, title) {
+            document.querySelectorAll('.view-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+            document.querySelectorAll('.channelButton__0').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) activeBtn.classList.add('active');
+            document.getElementById('mobileHeaderTitle').textContent = title;
+            switchView('messages');
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function openEditProfileModal() {
+            const modal = document.getElementById('editProfileModal');
+            if (!modal) return;
+
+            const nameInput = document.getElementById('editProfileDisplayName');
+            const handleInput = document.getElementById('editProfileUsername');
+            const pronounsInput = document.getElementById('editProfilePronouns');
+            const bioInput = document.getElementById('editProfileBio');
+
+            if (nameInput) nameInput.value = window.userData?.name || '';
+            if (handleInput) handleInput.value = window.userData?.handle || '';
+            if (pronounsInput) pronounsInput.value = window.userData?.pronouns || '';
+            if (bioInput) bioInput.value = window.profileData?.bio || '';
+
+            if (window.statusData) {
+                const commType = document.getElementById('editStatusCommissions');
+                const commCheck = document.getElementById('editProfileUseCommissionsSlots');
+                const commCurrent = document.getElementById('editSlotsCommissionsCurrent');
+                const commMax = document.getElementById('editSlotsCommissionsMax');
+
+                const tradesType = document.getElementById('editStatusTrades');
+                const tradesCheck = document.getElementById('editProfileUseTradesSlots');
+                const tradesCurrent = document.getElementById('editSlotsTradesCurrent');
+                const tradesMax = document.getElementById('editSlotsTradesMax');
+
+                const reqsType = document.getElementById('editStatusRequests');
+                const reqsCheck = document.getElementById('editProfileUseRequestsSlots');
+                const reqsCurrent = document.getElementById('editSlotsRequestsCurrent');
+                const reqsMax = document.getElementById('editSlotsRequestsMax');
+
+                if (commType) commType.value = window.statusData.commissions?.type || 'open';
+                if (commCheck) commCheck.checked = !!window.statusData.commissions?.slots;
+                if (commCurrent) commCurrent.value = window.statusData.commissions?.slots?.taken ?? '';
+                if (commMax) commMax.value = window.statusData.commissions?.slots?.total ?? '';
+                toggleCommissionsSlotsInput();
+
+                if (tradesType) tradesType.value = window.statusData.trades?.type || 'selective';
+                if (tradesCheck) tradesCheck.checked = !!window.statusData.trades?.slots;
+                if (tradesCurrent) tradesCurrent.value = window.statusData.trades?.slots?.taken ?? '';
+                if (tradesMax) tradesMax.value = window.statusData.trades?.slots?.total ?? '';
+                toggleTradesSlotsInput();
+
+                if (reqsType) reqsType.value = window.statusData.requests?.type || 'closed';
+                if (reqsCheck) reqsCheck.checked = !!window.statusData.requests?.slots;
+                if (reqsCurrent) reqsCurrent.value = window.statusData.requests?.slots?.taken ?? '';
+                if (reqsMax) reqsMax.value = window.statusData.requests?.slots?.total ?? '';
+                toggleRequestsSlotsInput();
+            }
+
+            clearProfileDirty();
+            modal.classList.add('active');
+        }
+
+        function closeEditProfileModal() {
+            const modal = document.getElementById('editProfileModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function saveProfileChanges() {
+            if (!window.userData) window.userData = {};
+            if (!window.profileData) window.profileData = {};
+
+            const nameInput = document.getElementById('editProfileDisplayName');
+            const handleInput = document.getElementById('editProfileUsername');
+            const pronounsInput = document.getElementById('editProfilePronouns');
+            const bioInput = document.getElementById('editProfileBio');
+
+            if (nameInput) window.userData.name = nameInput.value;
+            if (handleInput) window.userData.handle = handleInput.value;
+            if (pronounsInput) window.userData.pronouns = pronounsInput.value;
+            if (bioInput) window.profileData.bio = bioInput.value;
+
+            const commType = document.getElementById('editStatusCommissions');
+            const commCheck = document.getElementById('editProfileUseCommissionsSlots');
+            const commCurrent = document.getElementById('editSlotsCommissionsCurrent');
+            const commMax = document.getElementById('editSlotsCommissionsMax');
+
+            const tradesType = document.getElementById('editStatusTrades');
+            const tradesCheck = document.getElementById('editProfileUseTradesSlots');
+            const tradesCurrent = document.getElementById('editSlotsTradesCurrent');
+            const tradesMax = document.getElementById('editSlotsTradesMax');
+
+            const reqsType = document.getElementById('editStatusRequests');
+            const reqsCheck = document.getElementById('editProfileUseRequestsSlots');
+            const reqsCurrent = document.getElementById('editSlotsRequestsCurrent');
+            const reqsMax = document.getElementById('editSlotsRequestsMax');
+
+            if (!window.statusData) window.statusData = {};
+
+            window.statusData.commissions = {
+                type: commType ? commType.value : 'open',
+                slots: (commCheck && commCheck.checked) ? {
+                    taken: commCurrent ? parseInt(commCurrent.value, 10) || 0 : 0,
+                    total: commMax ? parseInt(commMax.value, 10) || 0 : 0
+                } : null
+            };
+
+            window.statusData.trades = {
+                type: tradesType ? tradesType.value : 'selective',
+                slots: (tradesCheck && tradesCheck.checked) ? {
+                    taken: tradesCurrent ? parseInt(tradesCurrent.value, 10) || 0 : 0,
+                    total: tradesMax ? parseInt(tradesMax.value, 10) || 0 : 0
+                } : null
+            };
+
+            window.statusData.requests = {
+                type: reqsType ? reqsType.value : 'closed',
+                slots: (reqsCheck && reqsCheck.checked) ? {
+                    taken: reqsCurrent ? parseInt(reqsCurrent.value, 10) || 0 : 0,
+                    total: reqsMax ? parseInt(reqsMax.value, 10) || 0 : 0
+                } : null
+            };
+
+            if (typeof window.renderProfileCard === 'function') window.renderProfileCard();
+            if (typeof window.renderProfileInfo === 'function') window.renderProfileInfo();
+            if (typeof window.renderStatusList === 'function') window.renderStatusList();
+            if (typeof window.renderProfileBio === 'function') window.renderProfileBio();
+
+            clearProfileDirty();
+            closeEditProfileModal();
+        }
+
+        function saveProfile() {
+            saveProfileChanges();
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const inviteCode = document.getElementById('loginInviteCode').value;
+            if (!email || !password) {
+                alert('Please fill out your email and password.');
+                return;
+            }
+            isLoggedIn = true;
+            document.getElementById('loginBannerBtn').style.display = 'none';
+            document.getElementById('editBannerBtn').style.display = 'flex';
+            document.getElementById('settingsBannerBtn').style.display = 'flex';
+            document.getElementById('editPricingSectionBtn').style.display = 'inline-flex';
+            const editOrderBtn = document.getElementById('editOrderSectionBtn');
+            if (editOrderBtn) editOrderBtn.style.display = 'inline-flex';
+            closeLoginModal();
+        }
+
+        function selectPricingOption(type) {
+            const select = document.getElementById('orderTypeSelect');
+            if (select) {
+                select.value = type;
+            }
+            showTab('order', 'Order Form');
+        }
+
+        function openTosModal() {
+            document.getElementById('tosModal').classList.add('active');
+        }
+
+        function closeTosModal() {
+            document.getElementById('tosModal').classList.remove('active');
+        }
+
+        function toggleSubmitBtn() {
+            const check = document.getElementById('tosCheck');
+            const btn = document.getElementById('confirmSubmitBtn');
+            if (check && btn) {
+                btn.disabled = !check.checked;
+            }
+        }
+
+        function confirmOrder() {
+            alert('Order submitted successfully!');
+            closeTosModal();
+        }
+    </script>
+
+</body>
+
+</html>
