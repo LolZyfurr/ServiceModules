@@ -806,7 +806,7 @@
             }
 
             try {
-                const response = await fetch('https://studio.lolzyfurr.workers.dev/users/1');
+                const response = await fetch(`https://studio.lolzyfurr.workers.dev/users/${userId}`);
                 if (!response.ok) throw new Error('Profile not found');
 
                 const fetchedUser = await response.json();
