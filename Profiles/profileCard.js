@@ -48,6 +48,9 @@ export default function newProfileCard(data = {}) {
     const loginBtn = document.createElement("button");
     loginBtn.id = "loginBannerBtn";
     loginBtn.className = "banner-btn";
+    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
+        loginBtn.style.display = "none";
+    }
     loginBtn.onclick = () => {
         if (typeof openLoginModal === "function") {
             openLoginModal();
