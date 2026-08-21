@@ -806,14 +806,14 @@
     <script src="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/pricingModal.js?t=1"></script>
 
     <script>
-        let isLoggedIn = false;
-        let isOwner = false;
+        window.isLoggedIn = false;
+        window.isOwner = false;
         let isProfileDirty = false;
         const API_BASE = "https://studio.lolzyfurr.workers.dev";
 
         async function checkAuthState(profileUserId) {
             const token = localStorage.getItem("authToken");
-            isLoggedIn = !!token; // Toggled based on token existence
+            window.isLoggedIn = !!token; // Toggled based on token existence
 
             if (!token) return false;
 
@@ -827,7 +827,7 @@
 
                 if (!response.ok) {
                     localStorage.removeItem("authToken");
-                    isLoggedIn = false;
+                    window.isLoggedIn = false;
                     return false;
                 }
 
@@ -835,14 +835,14 @@
 
                 // If current profile page matches self user id, set isOwner to true
                 if (selfData.id && selfData.id === profileUserId) {
-                    isOwner = true;
+                    window.isOwner = true;
                     showOwnerUI();
                 }
 
                 return true;
             } catch (err) {
                 console.error("Auth check failed:", err);
-                isLoggedIn = false;
+                window.isLoggedIn = false;
                 return false;
             }
         }
