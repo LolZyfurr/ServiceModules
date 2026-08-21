@@ -183,6 +183,7 @@ export default function newFormCard({
 
                 (field.options || []).forEach((opt) => {
                     const optLabel = document.createElement("label");
+                    optLabel.className = "selectionOption__0";
                     optLabel.style.fontWeight = "normal";
                     optLabel.style.cursor = "pointer";
 
