@@ -1,1 +1,21 @@
+<script>
+    const path = window.location.pathname.toLowerCase();
+    let file = 'redirect.html';
 
+    if (path.includes('/login')) {
+        file = 'login.html';
+    } else if (path.includes('/profile')) {
+        file = 'profile.html';
+    } else if (path.includes('/privacy')) {
+        file = 'privacy.html';
+    }
+
+    fetch(`https://raw.githubusercontent.com/LolZyfurr/ServiceModules/refs/heads/main/Pages/${file}`)
+        .then(response => response.text())
+        .then(html => {
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(err => console.error('Failed to load HTML:', err));
+</script>
