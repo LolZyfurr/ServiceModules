@@ -14,6 +14,17 @@
             padding: 24px;
         }
 
+        .notice-banner {
+            background-color: rgba(234, 179, 8, 0.15);
+            border: 1px solid rgba(234, 179, 8, 0.4);
+            color: #fef08a;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
         .auth-toggle {
             display: flex;
             gap: 10px;
@@ -54,6 +65,10 @@
 <body>
 
     <div class="modal-card auth-container">
+        <div class="notice-banner">
+            <strong>Notice:</strong> This login system is subject to change to Google OAuth and will not use email and passcode in the future due to not being able to send email authentication codes, etc. Please make sure to use the email address you plan to use with Google.
+        </div>
+
         <div class="auth-toggle">
             <button class="auth-tab active" id="tab-login" onclick="switchMode('login')">Log In</button>
             <button class="auth-tab" id="tab-signup" onclick="switchMode('signup')">Sign Up / Claim</button>
@@ -109,28 +124,34 @@
         const API_BASE = "https://your-worker.your-subdomain.workers.dev";
         let currentMode = "login";
 
+        async function redirectToProfile(token) {
+            try {
+                const res = await fetch(`${API_BASE}/auth/me`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const userId = data.id || localStorage.getItem("userId");
+                    if (userId) {
+                        window.location.href = `https://lolzyfurr.github.io/ArtistStudio/profile/${userId}`;
+                    }
+                } else {
+                    localStorage.removeItem("authToken");
+                    localStorage.removeItem("userId");
+                }
+            } catch (err) {
+                console.error("Session verification failed:", err);
+            }
+        }
+
         // Check if token already exists on load
         window.addEventListener("DOMContentLoaded", async () => {
             const token = localStorage.getItem("authToken");
             if (token) {
-                try {
-                    const res = await fetch(`${API_BASE}/auth/me`, {
-                        method: "GET",
-                        headers: {
-                            "Authorization": `Bearer ${token}`
-                        }
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        console.log("Already authenticated as:", data);
-                        // Redirect or update UI as needed
-                    } else {
-                        localStorage.removeItem("authToken");
-                        localStorage.removeItem("userId");
-                    }
-                } catch (err) {
-                    console.error("Session verification failed:", err);
-                }
+                await redirectToProfile(token);
             }
         });
 
@@ -211,7 +232,7 @@
                 data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.error || "Authentication failed");
+                    throw new Error(data.error || data.message || "Authentication failed");
                 }
 
                 // Store token and user ID to maintain session
@@ -223,7 +244,12 @@
                 }
 
                 console.log("Authentication successful:", data);
-                // Handle successful auth (e.g., location.reload() or redirect)
+
+                // Redirect to profile using current session info
+                const token = data.token || localStorage.getItem("authToken");
+                if (token) {
+                    await redirectToProfile(token);
+                }
 
             } catch (err) {
                 errorBox.textContent = err.message;
