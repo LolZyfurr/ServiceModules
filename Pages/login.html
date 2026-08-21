@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=2">
+    <style>
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 24px;
+        }
+
+        .auth-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .auth-tab {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 12px;
+            transition: color 0.2s ease;
+        }
+
+        .auth-tab.active {
+            color: #fff;
+            border-bottom: 2px solid #2563eb;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="modal-card auth-container">
+        <div class="auth-toggle">
+            <button class="auth-tab active" id="tab-login" onclick="switchMode('login')">Log In</button>
+            <button class="auth-tab" id="tab-signup" onclick="switchMode('signup')">Sign Up / Claim</button>
+        </div>
+
+        <div id="error-box" class="error-message"></div>
+
+        <form id="auth-form" onsubmit="handleAuth(event)">
+            <div id="signup-fields" class="hidden">
+                <div class="form-group">
+                    <label for="invite-code">Invite Code</label>
+                    <input type="text" id="invite-code" placeholder="e.g. FOUNDER-INIT-2026">
+                </div>
+                <div class="form-group">
+                    <label for="handle">Handle</label>
+                    <input type="text" id="handle" placeholder="username">
+                </div>
+                <div class="form-group">
+                    <label for="display-name">Display Name</label>
+                    <input type="text" id="display-name" placeholder="Your Name">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required placeholder="name@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="passcode">Passcode</label>
+                <input type="password" id="passcode" required placeholder="••••••••">
+            </div>
+
+            <label class="checkbox-group">
+                <input type="checkbox" id="privacy-agree" required>
+                <span>I agree to the Privacy Policy & Terms</span>
+            </label>
+
+            <button type="submit" class="submit-btn" id="submit-btn">Log In</button>
+        </form>
+        <footer class="site-footer" style="padding: 20px 0; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 24px;">
+            <p>&copy; 2026 Artist Studio by @LolZyfurr. All rights reserved.</p>
+            <p style="margin-top: 8px;">
+                <a href="/privacy.html" style="color: rgba(255, 255, 255, 0.6); text-decoration: underline; margin-right: 12px;">Privacy
+                    Policy</a>
+                <a href="/terms.html" style="color: rgba(255, 255, 255, 0.6); text-decoration: underline;">Terms
+                    of Service</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const API_BASE = "https://your-worker.your-subdomain.workers.dev";
+        let currentMode = "login";
+
+        // Check if token already exists on load
+        window.addEventListener("DOMContentLoaded", async () => {
+            const token = localStorage.getItem("authToken");
+            if (token) {
+                try {
+                    const res = await fetch(`${API_BASE}/auth/me`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        console.log("Already authenticated as:", data);
+                        // Redirect or update UI as needed
+                    } else {
+                        localStorage.removeItem("authToken");
+                        localStorage.removeItem("userId");
+                    }
+                } catch (err) {
+                    console.error("Session verification failed:", err);
+                }
+            }
+        });
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const signupFields = document.getElementById("signup-fields");
+            const tabLogin = document.getElementById("tab-login");
+            const tabSignup = document.getElementById("tab-signup");
+            const submitBtn = document.getElementById("submit-btn");
+            const errorBox = document.getElementById("error-box");
+
+            errorBox.style.display = "none";
+
+            if (mode === "signup") {
+                signupFields.classList.remove("hidden");
+                tabSignup.classList.add("active");
+                tabLogin.classList.remove("active");
+                submitBtn.textContent = "Claim Account";
+                document.getElementById("invite-code").required = true;
+                document.getElementById("handle").required = true;
+                document.getElementById("display-name").required = true;
+            } else {
+                signupFields.classList.add("hidden");
+                tabLogin.classList.add("active");
+                tabSignup.classList.remove("active");
+                submitBtn.textContent = "Log In";
+                document.getElementById("invite-code").required = false;
+                document.getElementById("handle").required = false;
+                document.getElementById("display-name").required = false;
+            }
+        }
+
+        async function handleAuth(event) {
+            event.preventDefault();
+            const errorBox = document.getElementById("error-box");
+            const submitBtn = document.getElementById("submit-btn");
+
+            errorBox.style.display = "none";
+            submitBtn.disabled = true;
+
+            const email = document.getElementById("email").value;
+            const passcode = document.getElementById("passcode").value;
+
+            try {
+                let response, data;
+
+                if (currentMode === "signup") {
+                    const code = document.getElementById("invite-code").value;
+                    const handle = document.getElementById("handle").value;
+                    const name = document.getElementById("display-name").value;
+
+                    response = await fetch(`${API_BASE}/auth/claim`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            code,
+                            email,
+                            passcode,
+                            handle,
+                            name
+                        })
+                    });
+                } else {
+                    response = await fetch(`${API_BASE}/auth/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            email,
+                            passcode
+                        })
+                    });
+                }
+
+                data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Authentication failed");
+                }
+
+                // Store token and user ID to maintain session
+                if (data.token) {
+                    localStorage.setItem("authToken", data.token);
+                }
+                if (data.id) {
+                    localStorage.setItem("userId", data.id);
+                }
+
+                console.log("Authentication successful:", data);
+                // Handle successful auth (e.g., location.reload() or redirect)
+
+            } catch (err) {
+                errorBox.textContent = err.message;
+                errorBox.style.display = "block";
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
