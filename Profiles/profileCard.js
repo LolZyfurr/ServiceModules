@@ -48,7 +48,7 @@ export default function newProfileCard(data = {}) {
     const loginBtn = document.createElement("button");
     loginBtn.id = "loginBannerBtn";
     loginBtn.className = "banner-btn";
-    if (typeof isLoggedIn !== "undefined" && isLoggedIn) {
+    if (typeof window !== "undefined" && window.isLoggedIn) {
         loginBtn.style.display = "none";
     }
     loginBtn.onclick = () => {
@@ -88,7 +88,7 @@ export default function newProfileCard(data = {}) {
     const editBtn = document.createElement("button");
     editBtn.id = "editBannerBtn";
     editBtn.className = "banner-btn";
-    editBtn.style.display = "none";
+    editBtn.style.display = (typeof window !== "undefined" && window.isOwner) ? "inline-flex" : "none";
     editBtn.onclick = () => {
         if (typeof openEditProfileModal === "function") {
             openEditProfileModal();
@@ -118,7 +118,7 @@ export default function newProfileCard(data = {}) {
     const settingsBtn = document.createElement("button");
     settingsBtn.id = "settingsBannerBtn";
     settingsBtn.className = "banner-btn";
-    settingsBtn.style.display = "none";
+    settingsBtn.style.display = (typeof window !== "undefined" && window.isOwner) ? "inline-flex" : "none";
     settingsBtn.onclick = () => alert("Settings opened");
 
     const settingsSvg = document.createElementNS(SVG_NS, "svg");
