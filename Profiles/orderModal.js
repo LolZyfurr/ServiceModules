@@ -193,17 +193,20 @@ function renderOrderOptionsInputs() {
             label: opt,
             value: opt
         } : opt;
-        const row = document.createElement('div');
-        row.style.display = 'flex';
-        row.style.gap = '8px';
-        row.style.marginBottom = '8px';
+        
+        // Wrap option row inside a label element with class="selectionOption__0"
+        const labelWrapper = document.createElement('label');
+        labelWrapper.className = 'selectionOption__0';
+        labelWrapper.style.display = 'flex';
+        labelWrapper.style.gap = '8px';
+        labelWrapper.style.marginBottom = '8px';
 
-        row.innerHTML = `
+        labelWrapper.innerHTML = `
             <input type="text" placeholder="Option Label" value="${optObj.label || ''}" style="flex:1;" oninput="updateOrderOption(${idx}, 'label', this.value)">
             <input type="text" placeholder="Value" value="${optObj.value || ''}" style="flex:1;" oninput="updateOrderOption(${idx}, 'value', this.value)">
             <button type="button" class="icon-btn danger-btn" onclick="removeOrderOptionInput(${idx})">✕</button>
         `;
-        container.appendChild(row);
+        container.appendChild(labelWrapper);
     });
 }
 
