@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artist Studio</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=6">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=7">
 </head>
 
 <body>
@@ -54,6 +54,143 @@
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" onclick="closeLoginModal()">Cancel</button>
                     <button type="button" class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="handleLogin()">Login / Register</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div id="editProfileModal" class="modal-overlay">
+            <div class="modal-card" id="editProfileCard">
+                <h3>Edit Profile</h3>
+                <p class="subtitle">Update your profile visuals, identity details, and active status indicators.</p>
+
+                <div class="form-group">
+                    <label>Banner Image</label>
+                    <input type="file" id="editProfileBannerUpload" accept="image/*" onchange="markProfileDirty()">
+                    <div id="profileBannerPreviewContainer" style="margin-top: 8px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Profile Picture</label>
+                    <input type="file" id="editProfileAvatarUpload" accept="image/*" onchange="markProfileDirty()">
+                    <div id="profileAvatarPreviewContainer" style="margin-top: 8px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input type="text" id="editProfileDisplayName" placeholder="Display Name" oninput="markProfileDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Handle / Username</label>
+                    <input type="text" id="editProfileUsername" placeholder="username" oninput="markProfileDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Pronouns</label>
+                    <input type="text" id="editProfilePronouns" placeholder="e.g. They/Them, She/Her" oninput="markProfileDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="editProfileBio" rows="3" placeholder="Tell visitors about yourself..." oninput="markProfileDirty()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Art Trades Status</label>
+                    <select id="editStatusTrades" onchange="markProfileDirty()">
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                        <option value="hold">On Hold</option>
+                        <option value="selective">Selective</option>
+                    </select>
+                    <div style="margin-top: 8px;">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="editProfileUseTradesSlots" onchange="toggleTradesSlotsInput(); markProfileDirty();">
+                            <span>Limit Art Trades Slots</span>
+                        </label>
+                    </div>
+                    <div id="tradesSlotsContainer" style="display: none; margin-top: 8px;">
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Current Trades</label>
+                                <input type="number" id="editSlotsTradesCurrent" min="0" placeholder="e.g. 1" oninput="markProfileDirty()">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Max Trades</label>
+                                <input type="number" id="editSlotsTradesMax" min="0" placeholder="e.g. 3" oninput="markProfileDirty()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Commissions Status</label>
+                    <select id="editStatusCommissions" onchange="markProfileDirty()">
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                        <option value="hold">On Hold</option>
+                        <option value="selective">Selective</option>
+                    </select>
+                    <div style="margin-top: 8px;">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="editProfileUseCommissionsSlots" onchange="toggleCommissionsSlotsInput(); markProfileDirty();">
+                            <span>Limit Commission Slots</span>
+                        </label>
+                    </div>
+                    <div id="commissionsSlotsContainer" style="display: none; margin-top: 8px;">
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Current Commissions</label>
+                                <input type="number" id="editSlotsCommissionsCurrent" min="0" placeholder="e.g. 2" oninput="markProfileDirty()">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Max Commissions</label>
+                                <input type="number" id="editSlotsCommissionsMax" min="0" placeholder="e.g. 5" oninput="markProfileDirty()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Requests Status</label>
+                    <select id="editStatusRequests" onchange="markProfileDirty()">
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                        <option value="hold">On Hold</option>
+                        <option value="selective">Selective</option>
+                    </select>
+                    <div style="margin-top: 8px;">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="editProfileUseRequestsSlots" onchange="toggleRequestsSlotsInput(); markProfileDirty();">
+                            <span>Limit Requests Slots</span>
+                        </label>
+                    </div>
+                    <div id="requestsSlotsContainer" style="display: none; margin-top: 8px;">
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Current Requests</label>
+                                <input type="number" id="editSlotsRequestsCurrent" min="0" placeholder="e.g. 0" oninput="markProfileDirty()">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.8rem;">Max Requests</label>
+                                <input type="number" id="editSlotsRequestsMax" min="0" placeholder="e.g. 2" oninput="markProfileDirty()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="margin-top: 15px; display: flex; justify-content: flex-end; gap: 8px;">
+                    <button type="button" class="btn-secondary" onclick="tryCloseProfileModal()">Close</button>
+                    <button type="button" class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="saveProfileChanges()">Save & Close</button>
+                </div>
+
+                <div id="profileUnsavedBar" class="unsaved-bar" style="display: none;">
+                    <span>Careful — you have unsaved changes!</span>
+                    <div class="bar-actions">
+                        <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="discardProfileChanges()">Discard</button>
+                        <button type="button" class="submit-btn" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="saveProfileChanges()">Save Changes</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -432,7 +569,7 @@
 
     <script type="module">
         import newPricingCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/pricingCard.js?t=1';
-        import newProfileCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileCard.js?t=1';
+        import newProfileCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileCard.js?t=2';
         import newKanbanColumn from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/kanbanColumn.js?t=2';
         import newFormCard from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/formCard.js?t=1';
         import newProfileInfo from 'https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/profileInfo.js?t=2';
@@ -863,6 +1000,60 @@
 
     <script>
         let isLoggedIn = false;
+        let isProfileDirty = false;
+
+        function markProfileDirty() {
+            isProfileDirty = true;
+            const bar = document.getElementById('profileUnsavedBar');
+            if (bar) bar.style.display = 'flex';
+        }
+
+        function clearProfileDirty() {
+            isProfileDirty = false;
+            const bar = document.getElementById('profileUnsavedBar');
+            if (bar) bar.style.display = 'none';
+        }
+
+        function toggleTradesSlotsInput() {
+            const check = document.getElementById('editProfileUseTradesSlots');
+            const container = document.getElementById('tradesSlotsContainer');
+            if (check && container) {
+                container.style.display = check.checked ? 'block' : 'none';
+            }
+        }
+
+        function toggleCommissionsSlotsInput() {
+            const check = document.getElementById('editProfileUseCommissionsSlots');
+            const container = document.getElementById('commissionsSlotsContainer');
+            if (check && container) {
+                container.style.display = check.checked ? 'block' : 'none';
+            }
+        }
+
+        function toggleRequestsSlotsInput() {
+            const check = document.getElementById('editProfileUseRequestsSlots');
+            const container = document.getElementById('requestsSlotsContainer');
+            if (check && container) {
+                container.style.display = check.checked ? 'block' : 'none';
+            }
+        }
+
+        function tryCloseProfileModal() {
+            if (isProfileDirty) {
+                if (confirm("You have unsaved changes! Are you sure you want to exit without saving?")) {
+                    discardProfileChanges();
+                    closeEditProfileModal();
+                }
+            } else {
+                closeEditProfileModal();
+            }
+        }
+
+        function discardProfileChanges() {
+            clearProfileDirty();
+            openEditProfileModal();
+            clearProfileDirty();
+        }
 
         function switchView(view) {
             const root = document.getElementById('appRoot');
@@ -890,6 +1081,132 @@
 
         function closeLoginModal() {
             document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function openEditProfileModal() {
+            const modal = document.getElementById('editProfileModal');
+            if (!modal) return;
+
+            const nameInput = document.getElementById('editProfileDisplayName');
+            const handleInput = document.getElementById('editProfileUsername');
+            const pronounsInput = document.getElementById('editProfilePronouns');
+            const bioInput = document.getElementById('editProfileBio');
+
+            if (nameInput) nameInput.value = window.userData?.name || '';
+            if (handleInput) handleInput.value = window.userData?.handle || '';
+            if (pronounsInput) pronounsInput.value = window.userData?.pronouns || '';
+            if (bioInput) bioInput.value = window.profileData?.bio || '';
+
+            if (window.statusData) {
+                const commType = document.getElementById('editStatusCommissions');
+                const commCheck = document.getElementById('editProfileUseCommissionsSlots');
+                const commCurrent = document.getElementById('editSlotsCommissionsCurrent');
+                const commMax = document.getElementById('editSlotsCommissionsMax');
+
+                const tradesType = document.getElementById('editStatusTrades');
+                const tradesCheck = document.getElementById('editProfileUseTradesSlots');
+                const tradesCurrent = document.getElementById('editSlotsTradesCurrent');
+                const tradesMax = document.getElementById('editSlotsTradesMax');
+
+                const reqsType = document.getElementById('editStatusRequests');
+                const reqsCheck = document.getElementById('editProfileUseRequestsSlots');
+                const reqsCurrent = document.getElementById('editSlotsRequestsCurrent');
+                const reqsMax = document.getElementById('editSlotsRequestsMax');
+
+                if (commType) commType.value = window.statusData.commissions?.type || 'open';
+                if (commCheck) commCheck.checked = !!window.statusData.commissions?.slots;
+                if (commCurrent) commCurrent.value = window.statusData.commissions?.slots?.taken ?? '';
+                if (commMax) commMax.value = window.statusData.commissions?.slots?.total ?? '';
+                toggleCommissionsSlotsInput();
+
+                if (tradesType) tradesType.value = window.statusData.trades?.type || 'selective';
+                if (tradesCheck) tradesCheck.checked = !!window.statusData.trades?.slots;
+                if (tradesCurrent) tradesCurrent.value = window.statusData.trades?.slots?.taken ?? '';
+                if (tradesMax) tradesMax.value = window.statusData.trades?.slots?.total ?? '';
+                toggleTradesSlotsInput();
+
+                if (reqsType) reqsType.value = window.statusData.requests?.type || 'closed';
+                if (reqsCheck) reqsCheck.checked = !!window.statusData.requests?.slots;
+                if (reqsCurrent) reqsCurrent.value = window.statusData.requests?.slots?.taken ?? '';
+                if (reqsMax) reqsMax.value = window.statusData.requests?.slots?.total ?? '';
+                toggleRequestsSlotsInput();
+            }
+
+            clearProfileDirty();
+            modal.classList.add('active');
+        }
+
+        function closeEditProfileModal() {
+            const modal = document.getElementById('editProfileModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function saveProfileChanges() {
+            if (!window.userData) window.userData = {};
+            if (!window.profileData) window.profileData = {};
+
+            const nameInput = document.getElementById('editProfileDisplayName');
+            const handleInput = document.getElementById('editProfileUsername');
+            const pronounsInput = document.getElementById('editProfilePronouns');
+            const bioInput = document.getElementById('editProfileBio');
+
+            if (nameInput) window.userData.name = nameInput.value;
+            if (handleInput) window.userData.handle = handleInput.value;
+            if (pronounsInput) window.userData.pronouns = pronounsInput.value;
+            if (bioInput) window.profileData.bio = bioInput.value;
+
+            const commType = document.getElementById('editStatusCommissions');
+            const commCheck = document.getElementById('editProfileUseCommissionsSlots');
+            const commCurrent = document.getElementById('editSlotsCommissionsCurrent');
+            const commMax = document.getElementById('editSlotsCommissionsMax');
+
+            const tradesType = document.getElementById('editStatusTrades');
+            const tradesCheck = document.getElementById('editProfileUseTradesSlots');
+            const tradesCurrent = document.getElementById('editSlotsTradesCurrent');
+            const tradesMax = document.getElementById('editSlotsTradesMax');
+
+            const reqsType = document.getElementById('editStatusRequests');
+            const reqsCheck = document.getElementById('editProfileUseRequestsSlots');
+            const reqsCurrent = document.getElementById('editSlotsRequestsCurrent');
+            const reqsMax = document.getElementById('editSlotsRequestsMax');
+
+            if (!window.statusData) window.statusData = {};
+
+            window.statusData.commissions = {
+                type: commType ? commType.value : 'open',
+                slots: (commCheck && commCheck.checked) ? {
+                    taken: commCurrent ? parseInt(commCurrent.value, 10) || 0 : 0,
+                    total: commMax ? parseInt(commMax.value, 10) || 0 : 0
+                } : null
+            };
+
+            window.statusData.trades = {
+                type: tradesType ? tradesType.value : 'selective',
+                slots: (tradesCheck && tradesCheck.checked) ? {
+                    taken: tradesCurrent ? parseInt(tradesCurrent.value, 10) || 0 : 0,
+                    total: tradesMax ? parseInt(tradesMax.value, 10) || 0 : 0
+                } : null
+            };
+
+            window.statusData.requests = {
+                type: reqsType ? reqsType.value : 'closed',
+                slots: (reqsCheck && reqsCheck.checked) ? {
+                    taken: reqsCurrent ? parseInt(reqsCurrent.value, 10) || 0 : 0,
+                    total: reqsMax ? parseInt(reqsMax.value, 10) || 0 : 0
+                } : null
+            };
+
+            if (typeof window.renderProfileCard === 'function') window.renderProfileCard();
+            if (typeof window.renderProfileInfo === 'function') window.renderProfileInfo();
+            if (typeof window.renderStatusList === 'function') window.renderStatusList();
+            if (typeof window.renderProfileBio === 'function') window.renderProfileBio();
+
+            clearProfileDirty();
+            closeEditProfileModal();
+        }
+
+        function saveProfile() {
+            saveProfileChanges();
         }
 
         function handleLogin() {
