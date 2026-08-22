@@ -596,7 +596,8 @@
                         <a href="/ArtistStudio/privacy"
                             style="color: rgba(255, 255, 255, 0.6); text-decoration: underline; margin-right: 12px;">Privacy
                             Policy</a>
-                        <a href="/ArtistStudio/terms" style="color: rgba(255, 255, 255, 0.6); text-decoration: underline;">Terms
+                        <a href="/ArtistStudio/terms"
+                            style="color: rgba(255, 255, 255, 0.6); text-decoration: underline;">Terms
                             of Service</a>
                     </p>
                 </footer>
@@ -662,6 +663,12 @@
         }
 
         function openLoginModal() {
+            if (window.isLoggedIn) {
+                if (window.isOwner) showOwnerUI();
+                if (typeof window.renderProfileCard === 'function') window.renderProfileCard();
+                if (typeof window.renderProfileInfo === 'function') window.renderProfileInfo();
+                return;
+            }
             window.location.href = "https://lolzyfurr.github.io/ArtistStudio/login";
         }
 
@@ -1103,6 +1110,8 @@
                 window.orderData = fetchedUser.channels?.Order;
                 window.galleryData = fetchedUser.channels?.Gallery;
                 window.termsData = fetchedUser.channels?.Terms;
+
+                await checkAuthState(userId);
 
                 renderAll();
             } catch (err) {
