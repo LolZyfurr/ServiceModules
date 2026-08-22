@@ -48,12 +48,29 @@ export default function newProfileCard(data = {}) {
     const loginBtn = document.createElement("button");
     loginBtn.id = "loginBannerBtn";
     loginBtn.className = "banner-btn";
+
+    console.log("[DEBUG] Checking isLoggedIn state:", {
+        hasWindow: typeof window !== "undefined",
+        isLoggedInVal: typeof window !== "undefined" ? window.isLoggedIn : undefined,
+        isLoggedInType: typeof window !== "undefined" ? typeof window.isLoggedIn : "undefined"
+    });
+
     if (typeof window !== "undefined" && window.isLoggedIn) {
+        console.log("[DEBUG] window.isLoggedIn is truthy. Hiding login button.");
         loginBtn.style.display = "none";
+    } else {
+        console.log("[DEBUG] window.isLoggedIn is falsy or undefined. Displaying login button.");
     }
+
     loginBtn.onclick = () => {
+        console.log("[DEBUG] Login button clicked. Checking openLoginModal function:", {
+            hasOpenLoginModal: typeof openLoginModal === "function",
+            openLoginModalType: typeof openLoginModal
+        });
         if (typeof openLoginModal === "function") {
             openLoginModal();
+        } else {
+            console.warn("[DEBUG] openLoginModal is not defined as a function on click.");
         }
     };
 
