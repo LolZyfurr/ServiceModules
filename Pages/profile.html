@@ -665,8 +665,6 @@
         function openLoginModal() {
             if (window.isLoggedIn) {
                 if (window.isOwner) showOwnerUI();
-                if (typeof window.renderProfileCard === 'function') window.renderProfileCard();
-                if (typeof window.renderProfileInfo === 'function') window.renderProfileInfo();
                 return;
             }
             window.location.href = "https://lolzyfurr.github.io/ArtistStudio/login";
@@ -886,6 +884,9 @@
             if (typeof window.renderProfileInfo === 'function') window.renderProfileInfo();
             if (typeof window.renderStatusList === 'function') window.renderStatusList();
             if (typeof window.renderProfileBio === 'function') window.renderProfileBio();
+            if (window.isLoggedIn) {
+                if (window.isOwner) showOwnerUI();
+            }
 
             clearProfileDirty();
             closeEditProfileModal();
@@ -1076,6 +1077,9 @@
             window.renderFormCard();
             window.renderGalleryGrid();
             window.renderTermsGrid();
+            if (window.isLoggedIn) {
+                if (window.isOwner) showOwnerUI();
+            }
         }
 
         function render404() {
