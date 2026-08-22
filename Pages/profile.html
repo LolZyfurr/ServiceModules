@@ -859,22 +859,47 @@
             const token = localStorage.getItem("authToken");
             if (token && window.userData.id) {
                 try {
-                    await fetch(`${API_BASE}/users/${window.userData.id}`, {
+                    const formData = new FormData();
+
+                    // Append metadata JSON payload
+                    formData.append('data', JSON.stringify({
+                        name: window.userData.name,
+                        handle: window.userData.handle,
+                        pronouns: window.userData.pronouns,
+                        profile: {
+                            bio: window.profileData.bio,
+                            status: window.statusData
+                        }
+                    }));
+
+                    // Append selected image files if present
+                    const avatarInput = document.getElementById('editProfileAvatarUpload');
+                    const bannerInput = document.getElementById('editProfileBannerUpload');
+
+                    if (avatarInput && avatarInput.files[0]) {
+                        formData.append('profilePicture', avatarInput.files[0]);
+                    }
+                    if (bannerInput && bannerInput.files[0]) {
+                        formData.append('banner', bannerInput.files[0]);
+                    }
+
+                    const response = await fetch(`${API_BASE}/users/${window.userData.id}`, {
                         method: "PUT",
                         headers: {
-                            "Content-Type": "application/json",
                             "Authorization": `Bearer ${token}`
+                            // Content-Type is intentionally omitted so fetch sets boundary headers
                         },
-                        body: JSON.stringify({
-                            name: window.userData.name,
-                            handle: window.userData.handle,
-                            pronouns: window.userData.pronouns,
-                            profile: {
-                                bio: window.profileData.bio,
-                                status: window.statusData
-                            }
-                        })
+                        body: formData
                     });
+
+                    if (response.ok) {
+                        const resData = await response.json();
+                        if (resData.user) {
+                            window.userData = resData.user;
+                            window.profileData = resData.user.profile;
+                            window.statusData = resData.user.profile?.status;
+                        }
+                    }
                 } catch (err) {
                     console.error("Failed to sync profile update to server:", err);
                 }
