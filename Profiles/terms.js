@@ -1,14 +1,5 @@
 export default function newTerms({
-    items = [
-        {
-            title: "Payment",
-            content: "Payment is required upfront before any work begins. Accepted payment methods include PayPal, Venmo, and Cash App. Please ensure that you have the necessary funds available before placing an order."
-        },
-        {
-            title: "Revisions",
-            content: "I offer up to 2 rounds of revisions for each commission. Additional revisions may incur extra fees. Please provide clear and specific feedback to ensure that the final artwork meets your expectations."
-        }
-    ]
+    items = []
 } = {}) {
     const data = { items };
 
