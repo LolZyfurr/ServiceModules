@@ -54,8 +54,8 @@
 
                 <div class="form-group">
                     <label>Display Name</label>
-                    <input type="text" id="editProfileDisplayName" placeholder="Display Name"
-                        oninput="markProfileDirty()">
+                    <input type="text" id="editProfileDisplayName" minlength="2" maxlength="20" required
+                        placeholder="Display Name" oninput="markProfileDirty()">
                 </div>
 
                 <div class="form-group">
@@ -65,13 +65,13 @@
 
                 <div class="form-group">
                     <label>Pronouns</label>
-                    <input type="text" id="editProfilePronouns" placeholder="e.g. They/Them, She/Her"
+                    <input type="text" id="editProfilePronouns" maxlength="20" placeholder="e.g. They/Them, She/Her"
                         oninput="markProfileDirty()">
                 </div>
 
                 <div class="form-group">
                     <label>Bio</label>
-                    <textarea id="editProfileBio" rows="3" placeholder="Tell visitors about yourself..."
+                    <textarea id="editProfileBio" rows="3" maxlength="200" placeholder="Tell visitors about yourself..."
                         oninput="markProfileDirty()"></textarea>
                 </div>
 
@@ -80,7 +80,6 @@
                     <select id="editStatusTrades" onchange="markProfileDirty()">
                         <option value="open">Open</option>
                         <option value="closed">Closed</option>
-                        <option value="hold">On Hold</option>
                         <option value="selective">Selective</option>
                     </select>
                     <div style="margin-top: 8px;">
@@ -111,7 +110,6 @@
                     <select id="editStatusCommissions" onchange="markProfileDirty()">
                         <option value="open">Open</option>
                         <option value="closed">Closed</option>
-                        <option value="hold">On Hold</option>
                         <option value="selective">Selective</option>
                     </select>
                     <div style="margin-top: 8px;">
@@ -130,7 +128,7 @@
                             </div>
                             <div style="flex: 1;">
                                 <label style="font-size: 0.8rem;">Max Commissions</label>
-                                <input type="number" id="editSlotsCommissionsMax" min="0" placeholder="e.g. 5"
+                                <input type="number" id="editSlotsCommissionsMax" min="0" max="99" placeholder="e.g. 5"
                                     oninput="markProfileDirty()">
                             </div>
                         </div>
@@ -142,7 +140,6 @@
                     <select id="editStatusRequests" onchange="markProfileDirty()">
                         <option value="open">Open</option>
                         <option value="closed">Closed</option>
-                        <option value="hold">On Hold</option>
                         <option value="selective">Selective</option>
                     </select>
                     <div style="margin-top: 8px;">
@@ -801,6 +798,7 @@
             if (modal) modal.classList.remove('active');
         }
 
+
         async function saveProfileChanges() {
             if (!window.userData) window.userData = {};
             if (!window.profileData) window.profileData = {};
@@ -812,7 +810,10 @@
 
             if (nameInput) window.userData.name = nameInput.value;
             if (handleInput) window.userData.handle = handleInput.value;
-            if (pronounsInput) window.userData.pronouns = pronounsInput.value;
+            if (pronounsInput) {
+                const val = pronounsInput.value.trim();
+                window.userData.pronouns = val !== '' ? pronounsInput.value : null;
+            }
             if (bioInput) window.profileData.bio = bioInput.value;
 
             const commType = document.getElementById('editStatusCommissions');
@@ -836,7 +837,7 @@
                 type: commType ? commType.value : 'open',
                 slots: (commCheck && commCheck.checked) ? {
                     taken: commCurrent ? parseInt(commCurrent.value, 10) || 0 : 0,
-                    total: commMax ? parseInt(commMax.value, 10) || 0 : 0
+                    total: commMax ? Math.min(parseInt(commMax.value, 10) || 0, 99) : 0
                 } : null
             };
 
@@ -899,9 +900,16 @@
                             window.profileData = resData.user.profile;
                             window.statusData = resData.user.profile?.status;
                         }
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast('Image upload failed; saved text updates locally.', 'warning');
+                        }
                     }
                 } catch (err) {
                     console.error("Failed to sync profile update to server:", err);
+                    if (typeof showToast === 'function') {
+                        showToast('Failed to sync image upload to server.', 'warning');
+                    }
                 }
             }
 
