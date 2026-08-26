@@ -415,6 +415,37 @@
             </div>
         </div>
 
+        <!-- Admin Code Generator Modal -->
+        <div id="codeGenModal" class="modal-overlay">
+            <div class="modal-card">
+                <h3>Invite Code Management</h3>
+
+                <div class="form-group">
+                    <label>Target Rank</label>
+                    <select id="modalCodeTargetRank"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Expiration (Hours)</label>
+                    <input type="number" id="modalCodeExpirationHours" placeholder="24" value="24" min="1" max="72">
+                </div>
+
+                <button type="button" id="modalBtnCodegen" class="submit-btn" onclick="generateInviteCode()">Generate
+                    Code</button>
+                <div id="modalCodeGenStatus" style="margin-top: 10px;"></div>
+
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1);">
+
+                <h4>Active Invite Codes</h4>
+                <div id="modalActiveCodesList"></div>
+
+                <div class="modal-actions" style="margin-top: 15px;">
+                    <button type="button" class="btn-secondary"
+                        onclick="document.getElementById('codeGenModal').classList.remove('active')">Close</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Channels Container -->
         <div class="containerChannels__1">
             <div class="containerProfile__1">
@@ -439,6 +470,17 @@
 
             <!-- Navigation Buttons -->
             <div class="channelList__1">
+                <!-- Hidden Code Generation Channel Button -->
+                <div class="channelButton__0" id="btn-codegen" style="display: none;" role="button"
+                    onclick="showTab('codegen', 'Invite Codes')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span>Invite Codes</span>
+                </div>
+
                 <div class="channelButton__0 active" id="btn-pricing" role="button"
                     onclick="showTab('pricing', 'Pricing & Info')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -583,6 +625,45 @@
                         </div>
                     </div>
 
+                    <!-- 6. CODE GENERATION PANEL (HIDDEN BY DEFAULT) -->
+                    <div id="codegen" class="view-panel">
+                        <div class="panel-header">
+                            <h2>Invite Code Generator</h2>
+                            <p>Generate and manage single-use invitation codes for new registration permissions.</p>
+                        </div>
+
+                        <!-- Code Creation Form -->
+                        <div class="card" style="margin-bottom: 20px;">
+                            <h4 style="margin-top:0; margin-bottom: 12px; color: #fff;">Create New Code</h4>
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+                                <div class="form-group" style="flex: 1; min-width: 140px; margin-bottom: 0;">
+                                    <label style="font-size: 0.8rem;">Target Rank</label>
+                                    <select id="codeTargetRank"
+                                        style="width: 100%; padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                                        <!-- Dynamically populated based on numeric rank -->
+                                    </select>
+                                </div>
+                                <div class="form-group" style="flex: 1; min-width: 140px; margin-bottom: 0;">
+                                    <label style="font-size: 0.8rem;">Expiration (Hours)</label>
+                                    <input type="number" id="codeExpirationHours" value="24" min="1" max="72"
+                                        style="width: 100%; padding: 8px; border-radius: 6px; background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                                </div>
+                                <button type="button" class="submit-btn"
+                                    style="width: auto; padding: 9px 20px; height: 38px;"
+                                    onclick="generateInviteCode()">Generate Code</button>
+                            </div>
+                            <div id="codeGenStatus" style="margin-top: 10px; font-size: 0.85rem;"></div>
+                        </div>
+
+                        <!-- Active Codes List -->
+                        <div class="card">
+                            <h4 style="margin-top:0; margin-bottom: 12px; color: #fff;">Active Invite Codes</h4>
+                            <div id="activeCodesList" style="display: flex; flex-direction: column; gap: 8px;">
+                                <p style="color: #888; font-size: 0.9rem;">Loading active codes...</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Copyright Footer -->
@@ -604,14 +685,160 @@
     </div>
 
     <script>
+        const API_BASE = "https://studio.lolzyfurr.workers.dev";
+
         window.isLoggedIn = false;
         window.isOwner = false;
+        // --- Code Generation & Rank Management Logic ---
+        window.userToken = window.userToken || localStorage.getItem("authToken") || '';
+
+        function checkCodePermissions() {
+            const btn = document.getElementById('btn-codegen');
+            const targetSelectPanel = document.getElementById('codeTargetRank');
+            const targetSelectModal = document.getElementById('modalCodeTargetRank');
+            const rank = window.userData?.rank; // Rank 1 = Founder, Rank 2 = Staff, Rank 3 = Member
+
+            // Verify logged-in status and code generation authority (Rank 1 or 2)
+            if (window.isLoggedIn && (rank === 1 || rank === 2)) {
+                if (btn) btn.style.display = 'flex';
+
+                const createOptions = () => {
+                    if (rank === 1) {
+                        return `
+                    <option value="2">Rank 2 (Staff)</option>
+                    <option value="3">Rank 3 (Member)</option>
+                `;
+                    } else if (rank === 2) {
+                        return `
+                    <option value="3">Rank 3 (Member)</option>
+                `;
+                    }
+                    return '';
+                };
+
+                if (targetSelectPanel) targetSelectPanel.innerHTML = createOptions();
+                if (targetSelectModal) targetSelectModal.innerHTML = createOptions();
+
+                loadActiveCodes();
+            } else {
+                if (btn) btn.style.display = 'none';
+            }
+        }
+
+        async function generateInviteCode() {
+            // Select elements from active tab view or fall back to modal
+            const statusDiv = document.getElementById('codeGenStatus') || document.getElementById('modalCodeGenStatus');
+            const targetRankEl = document.getElementById('codeTargetRank') || document.getElementById('modalCodeTargetRank');
+            const expirationHoursEl = document.getElementById('codeExpirationHours') || document.getElementById('modalCodeExpirationHours');
+
+            if (!statusDiv || !targetRankEl || !expirationHoursEl) return;
+
+            const targetRank = parseInt(targetRankEl.value, 10);
+            const expirationHours = parseInt(expirationHoursEl.value, 10);
+
+            // Front-end check for expiration constraint (1 to 72 hours)
+            if (isNaN(expirationHours) || expirationHours < 1 || expirationHours > 72) {
+                statusDiv.innerHTML = '<span style="color: #f44336;">Expiration time must be between 1 and 72 hours.</span>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<span style="color: #aaa;">Generating code...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/generate-code`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${window.userToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ targetRank, expirationHours })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    statusDiv.innerHTML = `<span style="color: #4CAF50;">Code created: <strong>${data.code}</strong> (Expires: ${new Date(data.expiresAt).toLocaleString()})</span>`;
+                    loadActiveCodes();
+                } else {
+                    statusDiv.innerHTML = `<span style="color: #f44336;">${data.message || 'Error generating code.'}</span>`;
+                }
+            } catch (err) {
+                statusDiv.innerHTML = '<span style="color: #f44336;">Network error occurred.</span>';
+            }
+        }
+
+        async function loadActiveCodes() {
+            const containers = [
+                document.getElementById('activeCodesList'),
+                document.getElementById('modalActiveCodesList')
+            ].filter(Boolean);
+
+            if (containers.length === 0) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/codes`, {
+                    headers: {
+                        'Authorization': `Bearer ${window.userToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                containers.forEach(container => {
+                    if (response.ok && data.success) {
+                        if (!data.codes || data.codes.length === 0) {
+                            container.innerHTML = '<p style="color: #888; font-size: 0.9rem;">No active invite codes.</p>';
+                            return;
+                        }
+
+                        container.innerHTML = data.codes.map(c => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 6px;">
+                        <div>
+                            <strong style="font-size: 1.05rem; letter-spacing: 1px; color: #fff;">${c.code}</strong>
+                            <div style="font-size: 0.75rem; color: #aaa;">Target Rank: ${c.targetRank} | Expires: ${new Date(c.expiresAt).toLocaleString()}</div>
+                        </div>
+                        <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; color: #ff5555; border-color: rgba(255,85,85,0.4);" onclick="revokeInviteCode('${c.code}')">Revoke</button>
+                    </div>
+                `).join('');
+                    } else {
+                        container.innerHTML = `<p style="color: #f44336; font-size: 0.9rem;">${data.message || 'Failed to fetch codes.'}</p>`;
+                    }
+                });
+            } catch (err) {
+                containers.forEach(container => {
+                    container.innerHTML = '<p style="color: #f44336; font-size: 0.9rem;">Network error fetching active codes.</p>';
+                });
+            }
+        }
+
+        async function revokeInviteCode(code) {
+            if (!confirm(`Are you sure you want to revoke code ${code}?`)) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/codes/${code}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${window.userToken}`
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    loadActiveCodes();
+                } else {
+                    alert(data.message || 'Failed to revoke code.');
+                }
+            } catch (err) {
+                alert('Network error revoking code.');
+            }
+        }
+
         let isProfileDirty = false;
-        const API_BASE = "https://studio.lolzyfurr.workers.dev";
 
         async function checkAuthState(profileUserId) {
             const token = localStorage.getItem("authToken");
-            window.isLoggedIn = !!token; // Toggled based on token existence
+            window.userToken = token || '';
+            window.isLoggedIn = !!token;
 
             if (!token) return false;
 
@@ -625,17 +852,23 @@
 
                 if (!response.ok) {
                     localStorage.removeItem("authToken");
+                    window.userToken = '';
                     window.isLoggedIn = false;
                     return false;
                 }
 
                 const selfData = await response.json();
 
-                // If current profile page matches self user id, set isOwner to true
                 if (selfData.id && selfData.id === profileUserId) {
                     window.isOwner = true;
                     showOwnerUI();
                 }
+
+                // Attach returned user profile info (including rank) to global state
+                window.userData = { ...window.userData, ...selfData };
+
+                // Execute permission check for invite codes
+                checkCodePermissions();
 
                 return true;
             } catch (err) {
@@ -722,7 +955,7 @@
 
         function switchView(view) {
             const root = document.getElementById('appRoot');
-            root.setAttribute('data-active-view', view);
+            if (root) root.setAttribute('data-active-view', view);
         }
 
         function showTab(tabId, title) {
@@ -736,7 +969,8 @@
             });
             const activeBtn = document.getElementById('btn-' + tabId);
             if (activeBtn) activeBtn.classList.add('active');
-            document.getElementById('mobileHeaderTitle').textContent = title;
+            const titleEl = document.getElementById('mobileHeaderTitle');
+            if (titleEl) titleEl.textContent = title;
             switchView('messages');
         }
 
@@ -938,11 +1172,13 @@
         }
 
         function openTosModal() {
-            document.getElementById('tosModal').classList.add('active');
+            const modal = document.getElementById('tosModal');
+            if (modal) modal.classList.add('active');
         }
 
         function closeTosModal() {
-            document.getElementById('tosModal').classList.remove('active');
+            const modal = document.getElementById('tosModal');
+            if (modal) modal.classList.remove('active');
         }
 
         function toggleSubmitBtn() {
