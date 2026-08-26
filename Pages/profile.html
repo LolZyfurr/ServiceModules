@@ -970,8 +970,8 @@
             const container = document.getElementById('profile-container');
             if (!container) return;
             container.innerHTML = '';
-            const profileData = window.profileData || exampleResponse.user.profile;
-            if (profileData?.banner) {
+            const profileData = window.profileData || {};
+            if (profileData.banner) {
                 document.body.style.backgroundImage = `url("${profileData.banner}")`;
             }
             const profile = newProfileCard({
@@ -983,7 +983,7 @@
 
         window.renderProfileInfo = function () {
             const target = document.querySelector('.profile-padding');
-            const userData = window.userData || exampleResponse.user;
+            const userData = window.userData || {};
             const profileInfo = newProfileInfo({
                 handle: userData.handle,
                 name: userData.name,
@@ -999,7 +999,7 @@
 
         window.renderStatusList = function () {
             const target = document.querySelector('.profile-status-list');
-            const statusData = window.statusData || exampleResponse.user.profile.status;
+            const statusData = window.statusData || [];
             const statusList = newStatusList(statusData);
             if (target) {
                 statusList.replace(target);
@@ -1010,7 +1010,7 @@
 
         window.renderProfileBio = function () {
             const target = document.querySelector('.profile-bio');
-            const profileData = window.profileData || exampleResponse.user.profile;
+            const profileData = window.profileData || {};
             const profileBio = newProfileBio({
                 bio: profileData.bio
             });
@@ -1025,7 +1025,7 @@
             const container = document.getElementById('pricing-container');
             if (!container) return;
             container.innerHTML = '';
-            (window.pricingData || exampleResponse.user.channels.Pricing).forEach(item => {
+            (window.pricingData || []).forEach(item => {
                 const card = newPricingCard({
                     title: item.title,
                     price: item.price,
@@ -1040,7 +1040,7 @@
             const container = document.getElementById('progress-container');
             if (!container) return;
             container.innerHTML = '';
-            (window.progressData || exampleResponse.user.channels.Progress).forEach(item => {
+            (window.progressData || []).forEach(item => {
                 const column = newKanbanColumn({
                     title: item.title,
                     items: item.items
@@ -1053,7 +1053,7 @@
             const container = document.getElementById('order-container');
             if (!container) return;
             container.innerHTML = '';
-            (window.orderData || exampleResponse.user.channels.Order).forEach(item => {
+            (window.orderData || []).forEach(item => {
                 const form = newFormCard({
                     id: item.id,
                     submitText: item.submitText,
@@ -1067,29 +1067,25 @@
         window.renderGalleryGrid = function () {
             const container = document.getElementById('gallery-container');
             if (!container) return;
-            const images = window.galleryData || exampleResponse.user.channels.Gallery;
-            const gallery = newGallery({
-                images
-            });
+            const images = window.galleryData || [];
+            const gallery = newGallery({ images });
             gallery.replace(container);
         };
 
         window.renderTermsGrid = function () {
             const container = document.getElementById('terms-container');
-            if (!container) return;
-            const termsList = window.termsData || exampleResponse.user.channels.Terms;
-            const terms = newTerms({
-                terms: termsList
-            });
-            terms.replace(container);
+            if (container) {
+                const termsList = window.termsData || [];
+                const terms = newTerms({ terms: termsList });
+                terms.replace(container);
+            }
 
-            const container01 = document.getElementById('terms-modal');
-            if (!container01) return;
-            const termsList01 = window.termsData || exampleResponse.user.channels.Terms;
-            const terms01 = newTerms({
-                terms: termsList
-            });
-            terms01.replace(container01);
+            const modalContainer = document.getElementById('terms-modal');
+            if (modalContainer) {
+                const termsList = window.termsData || [];
+                const modalTerms = newTerms({ terms: termsList });
+                modalTerms.replace(modalContainer);
+            }
         };
 
         function renderAll() {
@@ -1102,18 +1098,18 @@
             window.renderFormCard();
             window.renderGalleryGrid();
             window.renderTermsGrid();
-            if (window.isLoggedIn) {
-                if (window.isOwner) showOwnerUI();
+            if (window.isLoggedIn && window.isOwner && typeof showOwnerUI === 'function') {
+                showOwnerUI();
             }
         }
 
         function render404() {
             document.body.innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: #fff; font-family: sans-serif; text-align: center;">
-                    <h1 style="font-size: 4rem; margin: 0;">404</h1>
-                    <p style="font-size: 1.25rem; color: #888;">User profile not found.</p>
-                </div>
-            `;
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: #fff; font-family: sans-serif; text-align: center;">
+                <h1 style="font-size: 4rem; margin: 0;">404</h1>
+                <p style="font-size: 1.25rem; color: #888;">User profile not found.</p>
+            </div>
+        `;
         }
 
         async function initProfileRoute() {
@@ -1127,23 +1123,34 @@
 
             try {
                 const response = await fetch(`https://studio.lolzyfurr.workers.dev/users/${userId}`);
-                if (!response.ok) throw new Error('Profile not found');
+                if (!response.ok) {
+                    render404();
+                    return;
+                }
 
-                const fetchedUser = await response.json();
+                const rawData = await response.json();
+                const userObj = rawData.user || rawData;
 
-                window.userData = fetchedUser;
-                window.profileData = fetchedUser.profile;
-                window.statusData = fetchedUser.profile?.status;
-                window.pricingData = fetchedUser.channels?.Pricing;
-                window.progressData = fetchedUser.channels?.Progress;
-                window.orderData = fetchedUser.channels?.Order;
-                window.galleryData = fetchedUser.channels?.Gallery;
-                window.termsData = fetchedUser.channels?.Terms;
+                window.userData = userObj;
+                window.profileData = userObj.profile || {};
+                window.statusData = userObj.profile?.status || [];
+                window.pricingData = userObj.channels?.Pricing || [];
+                window.progressData = userObj.channels?.Progress || [];
+                window.orderData = userObj.channels?.Order || [];
+                window.galleryData = userObj.channels?.Gallery || [];
+                window.termsData = userObj.channels?.Terms || [];
 
-                await checkAuthState(userId);
+                if (typeof checkAuthState === 'function') {
+                    await checkAuthState(userId);
+                }
 
-                renderAll();
+                try {
+                    renderAll();
+                } catch (renderErr) {
+                    console.error("Rendering failed:", renderErr);
+                }
             } catch (err) {
+                console.error("Fetch/Auth failed:", err);
                 render404();
             }
         }
