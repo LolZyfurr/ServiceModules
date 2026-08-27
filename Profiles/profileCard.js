@@ -21,7 +21,7 @@ export default function newProfileCard(data = {}) {
 
     // Home Button
     const homeBtn = document.createElement("a");
-    homeBtn.href = "/";
+    homeBtn.href = "/ArtistStudio";
     homeBtn.id = "homeBannerBtn";
     homeBtn.className = "banner-btn";
 
