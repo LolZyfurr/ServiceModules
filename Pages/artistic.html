@@ -1,1 +1,171 @@
 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Hub | Home Platform</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=2">
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #c084fc 50%, #f472b6 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .hero-banner {
+            position: relative;
+            padding: 48px 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 24px;
+            overflow: hidden;
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+        }
+
+        .hero-banner h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .hero-banner p {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 650px;
+            margin: 0 auto 20px auto;
+            line-height: 1.5;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .nav-auth {
+            display: flex;
+            gap: 10px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .feature-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.65);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="listChannels__1" id="app">
+        <div class="containerMessages__1">
+            <div class="nav-header">
+                <div class="nav-brand">Artist Studio Hub</div>
+                <div class="nav-auth">
+                    <button class="btn-secondary" onclick="location.href='/ArtistStudio/login'">Login</button>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div id="home" class="view-panel active">
+                    <div class="hero-banner">
+                        <h1>The Ultimate Space for Artists to <span class="gradient-text">Manage, Showcase & Sell</span>
+                        </h1>
+                        <p>A centralized platform empowering digital creators, illustrators, and animators to organize
+                            commissions, publish portfolios, handle customized terms, and accept requests effortlessly.
+                        </p>
+                        <div class="hero-cta">
+                            <button class="submit-btn" style="width: auto; padding: 10px 24px;"
+                                onclick="location.href='/ArtistStudio/login'">Join as an Artist</button>
+                        </div>
+                    </div>
+
+                    <div class="panel-header">
+                        <h2>Platform Features</h2>
+                        <p>Everything you need to run your freelance commission workflow in one place.</p>
+                    </div>
+
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>📋 Visual Kanban Boards</h4>
+                            <p>Integrated Trello-style workflow management to keep your clients informed on status live.
+                            </p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🏷️ Tiered Pricing Displays</h4>
+                            <p>Configurable price structures, slot indicators, and carousel image previews for
+                                offerings.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🖼️ Multi-Artist Galleries</h4>
+                            <p>High-resolution portfolio spaces designed to present artwork cleanly without distraction.
+                            </p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>📜 Personal & Platform TOS</h4>
+                            <p>Display individual terms of service explicitly during submission to eliminate scope
+                                creep.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
