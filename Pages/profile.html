@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Artist Studio | Profile</title>
+    <title>Artist Studio</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=2">
 </head>
 
@@ -701,8 +701,8 @@
             const type = window.userData?.type;
             const rank = window.userData?.rank ?? (type === 'founder' ? 1 : type === 'staff' ? 2 : 3);
 
-            // Verify logged-in status and code generation authority (Rank 1 or 2)
-            if (window.isLoggedIn && (rank === 1 || rank === 2)) {
+            // Verify logged-in status, ownership of current profile, and code generation authority (Rank 1 or 2)
+            if (window.isLoggedIn && window.isOwner && (rank === 1 || rank === 2)) {
                 if (btn) btn.style.display = 'flex';
 
                 const createOptions = () => {
