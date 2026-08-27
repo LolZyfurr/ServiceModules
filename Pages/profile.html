@@ -6,9 +6,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artist Studio | Profile</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/LolZyfurr/ServiceModules@main/Profiles/style.css?t=2">
+    <style>
+        /* Full-screen Loading Overlay */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0b0e14;
+            /* OLED Dark Background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            opacity: 1;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        #loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Centered Logo / Spinner Container */
+        .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Pulse Animation for Logo */
+        .loader-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            animation: pulse 1.8s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+        }
+    </style>
 </head>
 
 <body>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loader-content">
+            <!-- Replace src with your centered logo URL -->
+            <img src="https://via.placeholder.com/80" alt="Loading Logo" class="loader-logo">
+        </div>
+    </div>
 
     <div class="listChannels__1" id="appRoot" data-active-view="channels">
         <div id="tosModal" class="modal-overlay">
@@ -1399,6 +1465,11 @@
             } catch (err) {
                 console.error("Fetch/Auth failed:", err);
                 render404();
+            }
+            // Hide the loading overlay smoothly after content renders
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.classList.add('hidden');
             }
         }
 
